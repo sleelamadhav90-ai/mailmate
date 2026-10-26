@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailSure — Email Deliverability Checker</title>
+    <meta name="description" content="A clean, responsible email deliverability and domain mail records checker.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#F7F9FC] text-[#243247] min-h-screen font-sans antialiased flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-[#E3E9F2] px-6 py-4 sticky top-0 z-30 shadow-xs">
+        <div class="max-w-6xl mx-auto flex items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-[#EAF2FF] border border-[#3478D4]/20 flex items-center justify-center text-[#3478D4]">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg font-bold tracking-tight text-[#243247]">MailSure</span>
+                        <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-[#EAF2FF] text-[#3478D4] font-medium">
+                            Deliverability Checker
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 text-xs font-medium text-[#68758A]">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#E6F4EA] text-[#25855A] font-medium text-[11px]">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                    <span>Privacy-first checks</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+        <!-- Editorial Hero Section -->
+        <section class="space-y-2">
+            <div class="inline-flex items-center gap-2 text-xs font-medium text-[#3478D4] bg-[#EAF2FF] px-2.5 py-1 rounded-md">
+                <span>Responsible Email Validation</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#243247] tracking-tight">
+                Know which emails need a closer look.
+            </h1>
+            <p class="text-[#68758A] text-sm sm:text-base max-w-2xl leading-relaxed">
+                Check email formatting and domain mail records in one place. Get clear results, understand potential delivery issues, and export your findings.
+            </p>
+            <div class="pt-1 flex items-center gap-1.5 text-xs text-[#68758A]">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-[#3478D4]"></i>
+                <span>No emails sent. No mailbox access required.</span>
+            </div>
+        </section>
+
+        <!-- Main Checker Interface Panel -->
+        <section class="bg-white rounded-xl border border-[#E3E9F2] p-6 shadow-xs space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <label for="emailInput" class="text-sm font-semibold text-[#243247] block">
+                        Enter email addresses
+                    </label>
+                    <p class="text-xs text-[#68758A]">Paste addresses separated by newlines, commas, or semicolons.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="loadSampleBtn" class="px-3 py-1.5 text-xs font-medium bg-[#F7F9FC] text-[#243247] hover:bg-[#EAF2FF] hover:text-[#3478D4] rounded-lg transition-colors flex items-center gap-1.5 border border-[#E3E9F2]">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#3478D4]"></i>
+                        <span>Load sample list</span>
+                    </button>
+                    <button type="button" id="clearBtn" class="px-3 py-1.5 text-xs font-medium bg-[#F7F9FC] text-[#243247] hover:bg-rose-50 hover:text-[#C44747] rounded-lg transition-colors flex items-center gap-1.5 border border-[#E3E9F2]">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        <span>Clear</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Textarea -->
+            <div class="relative">
+                <textarea 
+                    id="emailInput" 
+                    rows="6" 
+                    placeholder="alex@example.com&#10;hello@example.org&#10;user@domain.com"
+                    class="w-full bg-[#F7F9FC] border border-[#E3E9F2] rounded-lg p-4 text-sm font-mono text-[#243247] placeholder-[#68758A]/60 focus:outline-none focus:ring-2 focus:ring-[#3478D4] focus:border-transparent transition-all shadow-xs resize-y"
+                ></textarea>
+                <div class="absolute bottom-3 right-4 text-xs font-mono text-[#68758A] pointer-events-none">
+                    <span id="extractedCount">0</span> / 100 addresses
+                </div>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="errorBanner" class="hidden bg-[#FEF2F2] border border-[#FEE2E2] rounded-lg p-3.5 text-[#C44747] text-xs flex items-center gap-2.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-[#C44747]"></i>
+                <span id="errorMessage">An error occurred.</span>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+                <p class="text-xs text-[#68758A] max-w-lg">
+                    Note: DNS and syntax checks confirm domain routing capabilities, but cannot guarantee individual mailbox presence.
+                </p>
+                <button 
+                    type="button" 
+                    id="checkBtn" 
+                    class="w-full sm:w-auto px-6 py-2.5 bg-[#3478D4] hover:bg-[#2B66B8] text-white font-medium text-sm rounded-lg transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                    <span>Check emails</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Loading Indicator State -->
+        <section id="loadingState" class="hidden bg-white rounded-xl border border-[#E3E9F2] p-12 text-center space-y-3 shadow-xs">
+            <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#EAF2FF] text-[#3478D4] animate-spin">
+                <i data-lucide="loader-2" class="w-5 h-5"></i>
+            </div>
+            <div class="space-y-1">
+                <h3 class="text-sm font-semibold text-[#243247]">Checking addresses...</h3>
+                <p class="text-xs text-[#68758A]">Performing syntax checks and querying domain mail records.</p>
+            </div>
+        </section>
+
+        <!-- Results Section (Hidden until check runs) -->
+        <section id="resultsSection" class="hidden space-y-6">
+
+            <!-- Summary Stat Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-white border border-[#E3E9F2] rounded-xl p-4 flex items-center justify-between shadow-xs">
+                    <div>
+                        <span class="text-xs text-[#68758A] font-medium block">Total checked</span>
+                        <span id="statTotal" class="text-2xl font-bold font-mono text-[#243247]">0</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-[#F7F9FC] flex items-center justify-center text-[#68758A]">
+                        <i data-lucide="mail" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-[#25855A]/20 rounded-xl p-4 flex items-center justify-between shadow-xs">
+                    <div>
+                        <span class="text-xs text-[#25855A] font-semibold block">Likely Delivered</span>
+                        <span id="statDelivered" class="text-2xl font-bold font-mono text-[#25855A]">0</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-[#E6F4EA] flex items-center justify-center text-[#25855A]">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-[#C44747]/20 rounded-xl p-4 flex items-center justify-between shadow-xs">
+                    <div>
+                        <span class="text-xs text-[#C44747] font-semibold block">Likely to Bounce</span>
+                        <span id="statBounce" class="text-2xl font-bold font-mono text-[#C44747]">0</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-[#FEF2F2] flex items-center justify-center text-[#C44747]">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-[#A66B12]/20 rounded-xl p-4 flex items-center justify-between shadow-xs">
+                    <div>
+                        <span class="text-xs text-[#A66B12] font-semibold block">Unknown</span>
+                        <span id="statUnknown" class="text-2xl font-bold font-mono text-[#A66B12]">0</span>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-[#FFFBEB] flex items-center justify-center text-[#A66B12]">
+                        <i data-lucide="help-circle" class="w-4 h-4"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar & Filters -->
+            <div class="bg-white rounded-xl border border-[#E3E9F2] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+                
+                <div class="flex items-center gap-1 bg-[#F7F9FC] p-1 rounded-lg border border-[#E3E9F2] overflow-x-auto">
+                    <button type="button" data-filter="all" class="filter-tab active px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap">
+                        All (<span id="countAll">0</span>)
+                    </button>
+                    <button type="button" data-filter="Likely Delivered" class="filter-tab px-3 py-1.5 text-xs font-medium rounded-md transition-all text-[#68758A] hover:text-[#243247] whitespace-nowrap">
+                        Likely Delivered (<span id="countDelivered">0</span>)
+                    </button>
+                    <button type="button" data-filter="Likely to Bounce" class="filter-tab px-3 py-1.5 text-xs font-medium rounded-md transition-all text-[#68758A] hover:text-[#243247] whitespace-nowrap">
+                        Likely to Bounce (<span id="countBounce">0</span>)
+                    </button>
+                    <button type="button" data-filter="Unknown" class="filter-tab px-3 py-1.5 text-xs font-medium rounded-md transition-all text-[#68758A] hover:text-[#243247] whitespace-nowrap">
+                        Unknown (<span id="countUnknown">0</span>)
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="relative flex-1 md:w-64">
+                        <i data-lucide="search" class="w-4 h-4 text-[#68758A] absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Search address or domain..." 
+                            class="w-full bg-[#F7F9FC] border border-[#E3E9F2] rounded-lg pl-9 pr-3 py-1.5 text-xs text-[#243247] placeholder-[#68758A]/60 focus:outline-none focus:ring-1 focus:ring-[#3478D4]"
+                        />
+                    </div>
+                    <button 
+                        type="button" 
+                        id="exportCsvBtn" 
+                        class="px-3.5 py-1.5 bg-[#F7F9FC] hover:bg-[#EAF2FF] text-[#243247] border border-[#E3E9F2] font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap shadow-xs"
+                    >
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-[#3478D4]"></i>
+                        <span>Export CSV</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Results Table -->
+            <div class="bg-white rounded-xl border border-[#E3E9F2] overflow-hidden shadow-xs">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-[#F7F9FC] border-b border-[#E3E9F2] text-[#68758A] font-medium">
+                                <th class="py-3 px-4 w-12 text-center">#</th>
+                                <th class="py-3 px-4 min-w-[200px]">Email Address</th>
+                                <th class="py-3 px-4 min-w-[150px]">Status</th>
+                                <th class="py-3 px-4 min-w-[280px]">Reason & Details</th>
+                                <th class="py-3 px-4 min-w-[220px]">Checks Performed</th>
+                                <th class="py-3 px-4 w-24 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody" class="divide-y divide-[#E3E9F2]">
+                            <!-- Dynamically populated by script.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="noResultsState" class="hidden p-8 text-center text-[#68758A] space-y-1">
+                    <p class="text-xs">No email addresses match your selected filter or search query.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[#E3E9F2] bg-white px-6 py-4 text-xs text-[#68758A] mt-auto">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="font-bold text-[#243247]">MailSure</span> — Built for responsible email validation.
+            </div>
+            <div class="text-center sm:text-right text-[11px] text-[#68758A]">
+                DNS and syntax checks confirm server routing configuration, but cannot guarantee individual mailbox delivery.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main JS Application -->
+    <script src="/static/script.js"></script>
+    <script>
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>

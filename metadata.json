@@ -1,0 +1,6 @@
+{
+  "name": "MailSure — Email Deliverability Checker",
+  "description": "Professional email deliverability & syntax validation web application for ShieldNex Aerospace software selection task.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
