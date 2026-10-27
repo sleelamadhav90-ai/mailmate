@@ -51,10 +51,10 @@
         <!-- Editorial Hero Section -->
         <section class="space-y-4">
             <h1 class="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight text-[#1C1917] tracking-tight">
-                Know which emails need a closer look.
+                Know which emails are likely to get through.
             </h1>
             <p class="text-[#6E675F] text-sm sm:text-base max-w-xl font-normal leading-relaxed">
-                Assess a list of email addresses and understand which are likely deliverable, likely to bounce, or have an unknown status.
+                Check email addresses for likely deliverability, potential bounces, and uncertain results.
             </p>
 
             <!-- Feature Pill Badges -->
@@ -62,26 +62,26 @@
                 <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-[#5E482D]">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
                         <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-[#2B5C40]"></i>
-                        <span>Identify Deliverable</span>
+                        <span>Check Deliverability</span>
                     </span>
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
                         <i data-lucide="x-circle" class="w-3.5 h-3.5 text-[#902A24]"></i>
-                        <span>Detect Bounces</span>
+                        <span>Spot Potential Bounces</span>
                     </span>
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
                         <i data-lucide="help-circle" class="w-3.5 h-3.5 text-[#7E5109]"></i>
-                        <span>Understand Unknowns</span>
+                        <span>See Uncertain Results</span>
                     </span>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-3 text-xs text-[#787167] pt-1">
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EFECE4]/80 border border-[#D9D0C1]">
                         <span class="w-1.5 h-1.5 rounded-full bg-[#2B5C40]"></span>
-                        <span>No emails sent</span>
+                        <span>No emails are sent</span>
                     </span>
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EFECE4]/80 border border-[#D9D0C1]">
                         <i data-lucide="mail" class="w-3 h-3 text-[#787167]"></i>
-                        <span>No mailbox access required</span>
+                        <span>No mailbox access needed</span>
                     </span>
                 </div>
             </div>
@@ -92,14 +92,14 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <label htmlFor="emailInput" class="text-sm font-semibold text-[#1C1917] block font-sans">
-                        Email addresses
+                        Check your email list
                     </label>
-                    <p class="text-xs text-[#787167]">Paste addresses separated by newlines, commas, or semicolons.</p>
+                    <p class="text-xs text-[#787167]">Paste email addresses separated by commas, semicolons, or line breaks.</p>
                 </div>
                 <div class="flex items-center gap-3 text-xs font-sans">
                     <button type="button" id="loadSampleBtn" class="bg-gradient-to-r from-[#D9C09E] to-[#C4A47C] hover:from-[#CCA87B] hover:to-[#B89363] text-[#3D2914] px-3.5 py-1.5 rounded-full font-semibold transition-all flex items-center gap-1.5 cursor-pointer border border-[#C4A47C]/70 shadow-xs">
                         <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#3D2914]"></i>
-                        <span>Load sample data</span>
+                        <span>Try sample addresses</span>
                     </button>
                     <button type="button" id="clearBtn" class="text-[#787167] hover:text-[#902A24] transition-colors cursor-pointer font-medium px-2 py-1">
                         <span>Clear</span>
@@ -112,7 +112,7 @@
                 <textarea 
                     id="emailInput" 
                     rows="5" 
-                    placeholder="Paste email addresses here, one per line..."
+                    placeholder="Paste your email addresses here..."
                     class="w-full bg-transparent border-0 text-xs sm:text-sm font-mono text-[#1C1917] placeholder-[#787167]/60 focus:outline-none resize-y"
                 ></textarea>
             </div>

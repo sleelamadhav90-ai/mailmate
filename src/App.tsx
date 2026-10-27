@@ -321,10 +321,10 @@ export default function App() {
         {/* 2. Hero & Purpose Section — Warm Editorial Aesthetics */}
         <section className="space-y-4">
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight text-[#1C1917] tracking-tight">
-            Know which emails need a closer look.
+            Know which emails are likely to get through.
           </h1>
           <p className="text-[#6E675F] text-sm sm:text-base max-w-xl font-normal leading-relaxed">
-            Assess a list of email addresses and understand which are likely deliverable, likely to bounce, or have an unknown status.
+            Check email addresses for likely deliverability, potential bounces, and uncertain results.
           </p>
           
           {/* Feature Pill Badges */}
@@ -332,26 +332,26 @@ export default function App() {
             <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#5E482D]">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#2B5C40]" />
-                <span>Identify Deliverable</span>
+                <span>Check Deliverability</span>
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
                 <XCircle className="w-3.5 h-3.5 text-[#902A24]" />
-                <span>Detect Bounces</span>
+                <span>Spot Potential Bounces</span>
               </span>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
                 <HelpCircle className="w-3.5 h-3.5 text-[#7E5109]" />
-                <span>Understand Unknowns</span>
+                <span>See Uncertain Results</span>
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-3 text-xs text-[#787167] pt-1">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EFECE4]/80 border border-[#D9D0C1]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#2B5C40]"></span>
-                <span>No emails sent</span>
+                <span>No emails are sent</span>
               </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EFECE4]/80 border border-[#D9D0C1]">
                 <Mail className="w-3 h-3 text-[#787167]" />
-                <span>No mailbox access required</span>
+                <span>No mailbox access needed</span>
               </span>
             </div>
           </div>
@@ -363,9 +363,9 @@ export default function App() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <label htmlFor="emailInput" className="text-sm font-semibold text-[#1C1917] block font-sans">
-                Email addresses
+                Check your email list
               </label>
-              <p className="text-xs text-[#787167] font-sans">Paste addresses separated by newlines, commas, or semicolons.</p>
+              <p className="text-xs text-[#787167] font-sans">Paste email addresses separated by commas, semicolons, or line breaks.</p>
             </div>
 
             {/* Top-Right Secondary Action Group */}
@@ -376,7 +376,7 @@ export default function App() {
                 className="bg-gradient-to-r from-[#D9C09E] to-[#C4A47C] hover:from-[#CCA87B] hover:to-[#B89363] text-[#3D2914] px-3.5 py-1.5 rounded-full font-semibold transition-all flex items-center gap-1.5 cursor-pointer border border-[#C4A47C]/70 shadow-xs"
               >
                 <Sparkles className="w-3.5 h-3.5 text-[#3D2914]" />
-                <span>Load sample data</span>
+                <span>Try sample addresses</span>
               </button>
               {inputText.length > 0 && (
                 <button 
@@ -397,7 +397,7 @@ export default function App() {
               rows={5}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Paste email addresses here, one per line..."
+              placeholder="Paste your email addresses here..."
               className="w-full bg-transparent border-0 text-xs sm:text-sm font-mono text-[#1C1917] placeholder-[#787167]/60 focus:outline-none resize-y"
             />
           </div>
