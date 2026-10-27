@@ -1,7 +1,7 @@
 /**
  * MailMate — Email Deliverability Checker
  * Frontend Vanilla JavaScript Application
- * Classic Ivory, Charcoal & Burnt Orange Palette
+ * Refined Professional Microcopy & UX Writing
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const emails = extractEmails(rawText);
 
         if (emails.length === 0) {
-            showError('Please enter at least one email address to check.');
+            showError('Add at least one email address to continue.');
             return;
         }
 
@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || `Server returned error status ${response.status}`);
+                throw new Error(data.error || "We couldn't complete this check. Please try again.");
             }
 
             currentResults = data.results || [];
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } catch (err) {
-            showError(err.message || 'Failed to connect to verification server.');
+            showError(err.message || "We couldn't complete this check. Please try again.");
         } finally {
             if (loadingState) loadingState.classList.add('hidden');
             if (checkBtn) checkBtn.disabled = false;
@@ -168,24 +168,77 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSummaryKPIs(summary) {
+        const total = summary.total || currentResults.length || 0;
         const delivCount = summary.likely_deliverable ?? summary.likely_delivered ?? 0;
-        if (statTotal) statTotal.textContent = summary.total || currentResults.length;
-        if (statDelivered) statDelivered.textContent = delivCount;
-        if (statBounce) statBounce.textContent = summary.likely_to_bounce || 0;
-        if (statUnknown) statUnknown.textContent = summary.unknown || 0;
+        const bounceCount = summary.likely_to_bounce || 0;
+        const unknownCount = summary.unknown || 0;
 
-        if (countAll) countAll.textContent = summary.total || currentResults.length;
-        if (countDelivered) countDelivered.textContent = delivCount;
-        if (countBounce) countBounce.textContent = summary.likely_to_bounce || 0;
-        if (countUnknown) countUnknown.textContent = summary.unknown || 0;
+        if (statTotal) statTotal.textContent = total;
+        if (statDelivered) statDelivered.textContent = delivCount;
+        if (statBounce) statBounce.textContent = bounceCount;
+        if (statUnknown) statUnknown.textContent = unknownCount;
+
+        const pctTotal = document.getElementById('pctTotal');
+        const pctDelivered = document.getElementById('pctDelivered');
+        const pctBounce = document.getElementById('pctBounce');
+        const pctUnknown = document.getElementById('pctUnknown');
+
+        if (pctTotal) pctTotal.textContent = total > 0 ? '100%' : '0%';
+        if (pctDelivered) pctDelivered.textContent = total > 0 ? Math.round((delivCount / total) * 100) + '%' : '0%';
+        if (pctBounce) pctBounce.textContent = total > 0 ? Math.round((bounceCount / total) * 100) + '%' : '0%';
+        if (pctUnknown) pctUnknown.textContent = total > 0 ? Math.round((unknownCount / total) * 100) + '%' : '0%';
     }
+
+    function setActiveFilter(filterName) {
+        activeFilter = filterName;
+
+        // Update tab buttons
+        filterTabs.forEach(t => {
+            if (t.getAttribute('data-filter') === filterName) {
+                t.classList.add('active', 'bg-[#FFFFFF]', 'text-[#262522]', 'shadow-2xs', 'font-semibold');
+                t.classList.remove('text-[#77736D]', 'font-medium');
+            } else {
+                t.classList.remove('active', 'bg-[#FFFFFF]', 'text-[#262522]', 'shadow-2xs', 'font-semibold');
+                t.classList.add('text-[#77736D]', 'font-medium');
+            }
+        });
+
+        // Update card styles
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            const cardFilter = card.getAttribute('data-card-filter');
+            const isSelected = (cardFilter === activeFilter);
+            const labelEl = card.querySelector('[id^="filterLabel"]');
+
+            if (isSelected) {
+                card.classList.add('active', 'ring-2', 'shadow-xs');
+                if (labelEl) labelEl.textContent = 'Active filter (click to reset)';
+            } else {
+                card.classList.remove('active', 'ring-2', 'shadow-xs');
+                if (labelEl) labelEl.textContent = 'Click to filter';
+            }
+        });
+
+        renderTable();
+    }
+
+    // Attach card click handlers
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const cardFilter = card.getAttribute('data-card-filter');
+            if (activeFilter === cardFilter && cardFilter !== 'all') {
+                setActiveFilter('all');
+            } else {
+                setActiveFilter(cardFilter);
+            }
+        });
+    });
 
     filterTabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            filterTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            activeFilter = tab.getAttribute('data-filter');
-            renderTable();
+            const filterName = tab.getAttribute('data-filter');
+            setActiveFilter(filterName);
         });
     });
 
@@ -227,29 +280,29 @@ document.addEventListener('DOMContentLoaded', () => {
             let statusBadgeHtml = '';
             if (item.status === 'Likely Deliverable' || item.status === 'Likely Delivered') {
                 statusBadgeHtml = `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#EAF4EE] text-[#367553] border border-[#367553]/20">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#367553]"></span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#EAF4EE] text-[#39775B] border border-[#39775B]/20 whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#39775B]"></span>
                         <span>Likely Deliverable</span>
                     </span>
                 `;
             } else if (item.status === 'Likely to Bounce') {
                 statusBadgeHtml = `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#FBF0EF] text-[#B64A42] border border-[#B64A42]/20">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#B64A42]"></span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#FBF0EF] text-[#B84C43] border border-[#B84C43]/20 whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#B84C43]"></span>
                         <span>Likely to Bounce</span>
                     </span>
                 `;
             } else if (item.status === 'Invalid Format') {
                 statusBadgeHtml = `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#F5F4F0] text-[#686868] border border-[#E5E1DB]">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#686868]"></span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#F7F6F2] text-[#77736D] border border-[#E8E5DF] whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#77736D]"></span>
                         <span>Invalid Format</span>
                     </span>
                 `;
             } else {
                 statusBadgeHtml = `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#F8EEE6] text-[#A66D24] border border-[#A66D24]/20">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#A66D24]"></span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#F8EEE6] text-[#A87530] border border-[#A87530]/20 whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#A87530]"></span>
                         <span>Unknown</span>
                     </span>
                 `;
@@ -259,42 +312,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const checkTags = [];
             
             checkTags.push(c.syntax_valid 
-                ? `<span class="px-2 py-0.5 rounded bg-[#F5F4F0] text-[#252525] font-sans font-medium text-[11px] border border-[#E5E1DB]">Syntax: Valid</span>`
-                : `<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B64A42] font-sans font-medium text-[11px] border border-[#B64A42]/20">Syntax: Invalid</span>`
+                ? `<span class="px-2 py-0.5 rounded bg-[#F7F6F2] text-[#262522] font-sans font-medium text-[11px] border border-[#E8E5DF]">Syntax · Valid</span>`
+                : `<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] font-sans font-medium text-[11px] border border-[#B84C43]/20">Syntax · Invalid</span>`
             );
 
             if (c.dns_status === 'Skipped (Invalid Syntax)' || !c.syntax_valid) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F5F4F0] text-[#686868] font-sans font-medium text-[11px] border border-[#E5E1DB]">DNS: Skipped</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F7F6F2] text-[#77736D] font-sans font-medium text-[11px] border border-[#E8E5DF]">DNS · Not Checked</span>`);
             } else if (c.dns_status === 'TIMEOUT') {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A66D24] font-sans font-medium text-[11px] border border-[#A66D24]/20">DNS: Timeout</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A87530] font-sans font-medium text-[11px] border border-[#A87530]/20">DNS · Timed Out</span>`);
             } else if (c.dns_status === 'DNS_SERVER_ERROR') {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A66D24] font-sans font-medium text-[11px] border border-[#A66D24]/20">DNS: SERVFAIL</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A87530] font-sans font-medium text-[11px] border border-[#A87530]/20">DNS · Error</span>`);
             } else if (c.domain_exists) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F5F4F0] text-[#252525] font-sans font-medium text-[11px] border border-[#E5E1DB]">DNS: Resolved</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F7F6F2] text-[#262522] font-sans font-medium text-[11px] border border-[#E8E5DF]">DNS · Resolved</span>`);
             } else {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B64A42] font-sans font-medium text-[11px] border border-[#B64A42]/20">DNS: NXDOMAIN</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] font-sans font-medium text-[11px] border border-[#B84C43]/20">DNS · Not Found</span>`);
             }
 
             if (!c.syntax_valid) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F5F4F0] text-[#686868] font-sans font-medium text-[11px] border border-[#E5E1DB]">MX: N/A</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F7F6F2] text-[#77736D] font-sans font-medium text-[11px] border border-[#E8E5DF]">MX · Not Checked</span>`);
             } else if (c.mx_records_found) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#EAF4EE] text-[#367553] font-sans font-medium text-[11px] border border-[#367553]/20">MX: Present</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#EAF4EE] text-[#39775B] font-sans font-medium text-[11px] border border-[#39775B]/20">MX · Found</span>`);
             } else if (c.is_null_mx) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B64A42] font-sans font-medium text-[11px] border border-[#B64A42]/20">MX: Null MX</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] font-sans font-medium text-[11px] border border-[#B84C43]/20">MX · Null MX</span>`);
             } else if (c.has_fallback_a) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A66D24] font-sans font-medium text-[11px] border border-[#A66D24]/20">MX: Fallback A</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A87530] font-sans font-medium text-[11px] border border-[#A87530]/20">MX · Fallback A</span>`);
             } else if (c.domain_exists === false) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B64A42] font-sans font-medium text-[11px] border border-[#B64A42]/20">MX: None</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] font-sans font-medium text-[11px] border border-[#B84C43]/20">MX · Not Found</span>`);
             } else {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A66D24] font-sans font-medium text-[11px] border border-[#A66D24]/20">MX: Inconclusive</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A87530] font-sans font-medium text-[11px] border border-[#A87530]/20">MX · Inconclusive</span>`);
             }
 
             if (c.disposable_domain) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B64A42] font-sans font-medium text-[11px] border border-[#B64A42]/20">Disposable</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] font-sans font-medium text-[11px] border border-[#B84C43]/20">Disposable Domain</span>`);
             }
 
             if (c.role_account) {
-                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#C66A32] font-sans font-medium text-[11px] border border-[#E5E1DB]">Role Address</span>`);
+                checkTags.push(`<span class="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#B96332] font-sans font-medium text-[11px] border border-[#E8E5DF]">Role Address</span>`);
             }
 
             tr.innerHTML = `
@@ -308,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="py-3.5 px-4 text-right font-sans">
                     <button type="button" class="copy-btn px-2.5 py-1 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#252525] border border-[#E5E1DB] rounded text-xs font-sans font-medium transition-colors inline-flex items-center gap-1 cursor-pointer" data-email="${escapeHtml(item.email)}">
                         <i data-lucide="copy" class="w-3.5 h-3.5 text-[#686868]"></i>
-                        <span>Copy</span>
+                        <span>Copy email</span>
                     </button>
                 </td>
             `;
@@ -324,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const span = btn.querySelector('span');
                         if (span) {
                             const origText = span.textContent;
-                            span.textContent = 'Copied!';
+                            span.textContent = 'Email copied';
                             setTimeout(() => { span.textContent = origText; }, 1500);
                         }
                     });

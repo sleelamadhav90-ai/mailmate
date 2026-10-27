@@ -15,70 +15,71 @@
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-[#F5F4F0] text-[#252525] min-h-screen font-sans antialiased flex flex-col selection:bg-[#F8EEE6] selection:text-[#C66A32]">
+<body class="bg-[#F7F6F2] text-[#262522] min-h-screen font-sans antialiased flex flex-col selection:bg-[#F8EEE6] selection:text-[#B96332]">
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-[#FFFFFF] border-b border-[#E5E1DB] px-6 py-4 sticky top-0 z-30">
-        <div class="max-w-6xl mx-auto flex items-center justify-between gap-6">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-md bg-[#F8EEE6] border border-[#E5E1DB] flex items-center justify-center text-[#C66A32]">
-                    <i data-lucide="mail" class="w-4 h-4"></i>
+    <!-- Top Navigation Bar — Strict One-Row 3-Zone Contract -->
+    <header class="bg-[#FFFFFF] border-b border-[#E8E5DF] px-6 py-4 sticky top-0 z-30">
+        <div class="max-w-5xl mx-auto flex items-center justify-between gap-8">
+            
+            <!-- Zone 1: Single text element wordmark -->
+            <div class="flex items-center gap-2.5 shrink-0">
+                <div class="w-7 h-7 rounded bg-[#F8EEE6] border border-[#E8E5DF] flex items-center justify-center text-[#B96332]">
+                    <i data-lucide="mail" class="w-3.5 h-3.5"></i>
                 </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-lg font-bold tracking-tight text-[#252525]">MailMate</span>
-                        <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-[#F8EEE6] text-[#C66A32] border border-[#E5E1DB] font-medium">
-                            Deliverability Checker
-                        </span>
-                    </div>
-                </div>
+                <span class="text-lg font-bold tracking-tight text-[#262522] whitespace-nowrap">MailMate</span>
             </div>
 
-            <div class="flex items-center gap-4 text-xs font-medium text-[#686868]">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F5F4F0] text-[#686868] border border-[#E5E1DB] font-medium text-[11px]">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#367553]"></i>
+            <!-- Zone 2: Quiet tagline metadata -->
+            <div class="hidden sm:flex items-center text-xs font-normal text-[#77736D] whitespace-nowrap">
+                <span>Check first. Send smarter.</span>
+            </div>
+
+            <!-- Zone 3: Privacy indicator -->
+            <div class="flex items-center gap-2 shrink-0">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F7F6F2] text-[#77736D] border border-[#E8E5DF] text-[11px] whitespace-nowrap">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-[#39775B]"></i>
                     <span>Privacy-first checks</span>
                 </div>
             </div>
+
         </div>
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
+    <main class="flex-1 max-w-5xl w-full mx-auto px-6 py-10 space-y-12">
 
         <!-- Editorial Hero Section -->
         <section class="space-y-3">
-            <div class="inline-flex items-center gap-2 text-xs font-medium text-[#C66A32] bg-[#F8EEE6] border border-[#E5E1DB] px-2.5 py-1 rounded-md">
-                <span>Check first. Send smarter.</span>
-            </div>
-            <h1 class="font-serif-display text-[36px] sm:text-[46px] md:text-[52px] leading-[1.15] text-[#252525] tracking-normal">
+            <h1 class="font-serif text-3xl sm:text-4xl md:text-[44px] leading-tight text-[#262522] tracking-tight">
                 Know which emails need a closer look.
             </h1>
-            <p class="text-[#686868] text-sm sm:text-base max-w-2xl leading-relaxed font-normal">
+            <p class="text-[#77736D] text-sm sm:text-base max-w-xl font-normal leading-relaxed">
                 Assess a list of email addresses and understand which are likely deliverable, likely to bounce, or have an unknown status.
             </p>
-            <div class="pt-1 flex items-center gap-1.5 text-xs text-[#686868]">
-                <i data-lucide="info" class="w-3.5 h-3.5 text-[#C66A32]"></i>
-                <span>No emails sent. No mailbox access required.</span>
+            <div class="pt-1 flex items-center gap-2 text-xs text-[#77736D]">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#39775B]"></span>
+                <span>No emails sent</span>
+                <span class="text-[#E8E5DF]">·</span>
+                <span>No mailbox access required</span>
             </div>
         </section>
 
-        <!-- Main Checker Interface Panel -->
-        <section class="bg-[#FFFFFF] rounded-xl border border-[#E5E1DB] p-6 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <!-- Primary Interactive Input Area -->
+        <section class="bg-[#FFFFFF] rounded-xl border border-[#E8E5DF] p-6 space-y-4 shadow-2xs">
+            <div class="flex items-center justify-between gap-4">
                 <div>
-                    <h2 class="text-sm font-semibold text-[#252525] block">
-                        Enter email addresses
-                    </h2>
-                    <p class="text-xs text-[#686868]">Paste addresses separated by newlines, commas, or semicolons.</p>
+                    <label htmlFor="emailInput" class="text-sm font-semibold text-[#262522] block font-sans">
+                        Email addresses
+                    </label>
+                    <p class="text-xs text-[#77736D]">Paste addresses separated by newlines, commas, or semicolons.</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button type="button" id="loadSampleBtn" class="px-3 py-1.5 text-xs font-medium bg-[#FFFFFF] text-[#252525] hover:text-[#C66A32] hover:bg-[#F8EEE6] rounded-lg transition-colors flex items-center gap-1.5 border border-[#E5E1DB]">
-                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#C66A32]"></i>
-                        <span>Load sample list</span>
+                <div class="flex items-center gap-3 text-xs font-sans">
+                    <button type="button" id="loadSampleBtn" class="text-[#77736D] hover:text-[#B96332] transition-colors flex items-center gap-1 cursor-pointer font-medium">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#B96332]"></i>
+                        <span>Load sample data</span>
                     </button>
-                    <button type="button" id="clearBtn" class="px-3 py-1.5 text-xs font-medium bg-[#FFFFFF] text-[#252525] hover:text-[#B64A42] hover:bg-[#FBF0EF] rounded-lg transition-colors flex items-center gap-1.5 border border-[#E5E1DB]">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span class="text-[#E8E5DF]">|</span>
+                    <button type="button" id="clearBtn" class="text-[#77736D] hover:text-[#B84C43] transition-colors cursor-pointer font-medium">
                         <span>Clear</span>
                     </button>
                 </div>
@@ -89,29 +90,26 @@
                 <textarea 
                     id="emailInput" 
                     rows="6" 
-                    placeholder="alex@example.com&#10;hello@example.org&#10;user@domain.com"
-                    class="w-full bg-[#FFFFFF] border border-[#E5E1DB] rounded-lg p-4 text-sm font-mono text-[#252525] placeholder-[#686868]/50 focus:outline-none focus:ring-2 focus:ring-[#C66A32]/30 focus:border-[#C66A32] transition-all resize-y"
+                    placeholder="Paste email addresses here, one per line..."
+                    class="w-full bg-[#FFFFFF] border border-[#E8E5DF] rounded-lg p-4 text-xs sm:text-sm font-mono text-[#262522] placeholder-[#77736D]/40 focus:outline-none focus:ring-1 focus:ring-[#B96332] focus:border-[#B96332] transition-all resize-y"
                 ></textarea>
-                <div class="absolute bottom-3 right-4 text-xs font-mono text-[#686868] pointer-events-none">
-                    <span id="extractedCount">0</span> / 100 addresses
-                </div>
             </div>
 
             <!-- Error Banner -->
-            <div id="errorBanner" class="hidden bg-[#FBF0EF] border border-[#B64A42]/20 rounded-lg p-3.5 text-[#B64A42] text-xs flex items-center gap-2.5">
-                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-[#B64A42]"></i>
+            <div id="errorBanner" class="hidden bg-[#FBF0EF] border border-[#B84C43]/20 rounded-lg p-3 text-[#B84C43] text-xs flex items-center gap-2">
+                <i data-lucide="alert-circle" class="w-4 h-4 shrink-0 text-[#B84C43]"></i>
                 <span id="errorMessage">An error occurred.</span>
             </div>
 
             <!-- Action Controls -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
-                <p class="text-xs text-[#686868] max-w-lg leading-relaxed">
-                    Note: Domain-level DNS and syntax checks confirm mail server routing configuration, but cannot guarantee individual mailbox presence.
-                </p>
+                <div class="text-xs font-mono text-[#77736D]">
+                    <span id="extractedCount">0</span> / 100 max addresses
+                </div>
                 <button 
                     type="button" 
                     id="checkBtn" 
-                    class="w-full sm:w-auto px-6 py-2.5 bg-[#C66A32] hover:bg-[#B35D2A] text-white font-medium text-sm rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full sm:w-auto px-6 py-2.5 bg-[#B96332] hover:bg-[#A35427] text-white font-medium text-xs sm:text-sm rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-2xs"
                 >
                     <i data-lucide="search" class="w-4 h-4 text-white"></i>
                     <span>Check emails</span>
@@ -120,96 +118,143 @@
         </section>
 
         <!-- Loading Indicator State -->
-        <section id="loadingState" class="hidden bg-[#FFFFFF] rounded-xl border border-[#E5E1DB] p-12 text-center space-y-3">
-            <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#F8EEE6] text-[#C66A32] animate-spin">
+        <section id="loadingState" class="hidden bg-[#FFFFFF] rounded-xl border border-[#E8E5DF] p-12 text-center space-y-3">
+            <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[#F8EEE6] text-[#B96332] animate-spin">
                 <i data-lucide="loader-2" class="w-5 h-5"></i>
             </div>
             <div class="space-y-1">
-                <h3 class="text-sm font-semibold text-[#252525]">Checking addresses...</h3>
-                <p class="text-xs text-[#686868]">Performing syntax checks and querying domain mail records.</p>
+                <h3 class="text-sm font-semibold text-[#262522]">Checking addresses...</h3>
+                <p class="text-xs text-[#77736D]">Performing syntax checks and querying domain mail records.</p>
             </div>
         </section>
 
         <!-- Results Section (Hidden until check runs) -->
-        <section id="resultsSection" class="hidden space-y-6">
+        <section id="resultsSection" class="hidden space-y-8">
 
-            <!-- Summary Stat Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="bg-[#FFFFFF] border border-[#E5E1DB] rounded-lg p-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs text-[#686868] font-medium block">Total checked</span>
-                        <span id="statTotal" class="text-2xl font-bold font-mono text-[#252525]">0</span>
+            <!-- Metric Cards Grid matching reference layout -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-sans">
+                
+                <!-- Total Processed -->
+                <div 
+                    data-card-filter="all"
+                    class="stat-card active rounded-2xl p-5 cursor-pointer transition-all flex flex-col justify-between h-32 relative border bg-[#F3F3FE] border-[#635BFF] ring-2 ring-[#635BFF]/20 shadow-xs"
+                >
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs sm:text-sm font-semibold text-[#3B33C6]">Total Processed</span>
+                        <div class="w-7 h-7 rounded-full bg-[#E0DFFA] flex items-center justify-center text-[#635BFF]">
+                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                        </div>
                     </div>
-                    <div class="w-8 h-8 rounded-md bg-[#F5F4F0] border border-[#E5E1DB] flex items-center justify-center text-[#686868]">
-                        <i data-lucide="mail" class="w-4 h-4"></i>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span id="statTotal" class="text-2xl font-mono tabular-nums font-bold text-[#1E1B4B]">0</span>
+                        <span id="pctTotal" class="text-xs font-semibold text-[#635BFF]">100%</span>
+                    </div>
+                    <div class="text-[11px] font-medium text-[#635BFF]/80 flex items-center gap-1 pt-1">
+                        <i data-lucide="filter" class="w-3 h-3 text-[#635BFF]"></i>
+                        <span id="filterLabelTotal">Active filter (click to reset)</span>
                     </div>
                 </div>
 
-                <div class="bg-[#FFFFFF] border border-[#E5E1DB] rounded-lg p-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs text-[#367553] font-semibold block">Likely Delivered</span>
-                        <span id="statDelivered" class="text-2xl font-bold font-mono text-[#367553]">0</span>
+                <!-- Likely to be delivered -->
+                <div 
+                    data-card-filter="Likely Deliverable"
+                    class="stat-card rounded-2xl p-5 cursor-pointer transition-all flex flex-col justify-between h-32 relative border bg-[#EAF7F0]/70 border-[#D2EFE0] hover:border-[#39775B]/60 hover:bg-[#EAF7F0]"
+                >
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs sm:text-sm font-semibold text-[#1E563B]">Likely to be delivered</span>
+                        <div class="w-7 h-7 rounded-full bg-[#D2EFE0] flex items-center justify-center text-[#39775B]">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                        </div>
                     </div>
-                    <div class="w-8 h-8 rounded-md bg-[#EAF4EE] border border-[#367553]/20 flex items-center justify-center text-[#367553]">
-                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span id="statDelivered" class="text-2xl font-mono tabular-nums font-bold text-[#1E563B]">0</span>
+                        <span id="pctDelivered" class="text-xs font-semibold text-[#39775B]">0%</span>
+                    </div>
+                    <div class="text-[11px] font-medium text-[#39775B]/80 flex items-center gap-1 pt-1">
+                        <i data-lucide="filter" class="w-3 h-3 text-[#39775B]"></i>
+                        <span id="filterLabelDelivered">Click to filter</span>
                     </div>
                 </div>
 
-                <div class="bg-[#FFFFFF] border border-[#E5E1DB] rounded-lg p-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs text-[#B64A42] font-semibold block">Likely to Bounce</span>
-                        <span id="statBounce" class="text-2xl font-bold font-mono text-[#B64A42]">0</span>
+                <!-- Likely to bounce -->
+                <div 
+                    data-card-filter="Likely to Bounce"
+                    class="stat-card rounded-2xl p-5 cursor-pointer transition-all flex flex-col justify-between h-32 relative border bg-[#FDF2F2]/70 border-[#F8D7D5] hover:border-[#B84C43]/60 hover:bg-[#FDF2F2]"
+                >
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs sm:text-sm font-semibold text-[#9B322A]">Likely to bounce</span>
+                        <div class="w-7 h-7 rounded-full bg-[#F8D7D5] flex items-center justify-center text-[#B84C43]">
+                            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                        </div>
                     </div>
-                    <div class="w-8 h-8 rounded-md bg-[#FBF0EF] border border-[#B64A42]/20 flex items-center justify-center text-[#B64A42]">
-                        <i data-lucide="x-circle" class="w-4 h-4"></i>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span id="statBounce" class="text-2xl font-mono tabular-nums font-bold text-[#9B322A]">0</span>
+                        <span id="pctBounce" class="text-xs font-semibold text-[#B84C43]">0%</span>
+                    </div>
+                    <div class="text-[11px] font-medium text-[#B84C43]/80 flex items-center gap-1 pt-1">
+                        <i data-lucide="filter" class="w-3 h-3 text-[#B84C43]"></i>
+                        <span id="filterLabelBounce">Click to filter</span>
                     </div>
                 </div>
 
-                <div class="bg-[#FFFFFF] border border-[#E5E1DB] rounded-lg p-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-xs text-[#A66D24] font-semibold block">Unknown</span>
-                        <span id="statUnknown" class="text-2xl font-bold font-mono text-[#A66D24]">0</span>
+                <!-- Unknown -->
+                <div 
+                    data-card-filter="Unknown"
+                    class="stat-card rounded-2xl p-5 cursor-pointer transition-all flex flex-col justify-between h-32 relative border bg-[#FEFAF0]/70 border-[#F9ECCE] hover:border-[#A87530]/60 hover:bg-[#FEFAF0]"
+                >
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs sm:text-sm font-semibold text-[#855B21]">Unknown</span>
+                        <div class="w-7 h-7 rounded-full bg-[#F9ECCE] flex items-center justify-center text-[#A87530]">
+                            <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                        </div>
                     </div>
-                    <div class="w-8 h-8 rounded-md bg-[#F8EEE6] border border-[#A66D24]/20 flex items-center justify-center text-[#A66D24]">
-                        <i data-lucide="help-circle" class="w-4 h-4"></i>
+                    <div class="flex items-baseline justify-between mt-1">
+                        <span id="statUnknown" class="text-2xl font-mono tabular-nums font-bold text-[#855B21]">0</span>
+                        <span id="pctUnknown" class="text-xs font-semibold text-[#A87530]">0%</span>
+                    </div>
+                    <div class="text-[11px] font-medium text-[#A87530]/80 flex items-center gap-1 pt-1">
+                        <i data-lucide="filter" class="w-3 h-3 text-[#A87530]"></i>
+                        <span id="filterLabelUnknown">Click to filter</span>
                     </div>
                 </div>
+
             </div>
 
             <!-- Toolbar & Filters -->
-            <div class="bg-[#FFFFFF] rounded-xl border border-[#E5E1DB] p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="bg-[#FFFFFF] rounded-2xl border border-[#E8E5DF] p-3 sm:p-4 shadow-2xs space-y-3 sm:space-y-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
                 
-                <div class="flex items-center gap-1 bg-[#F5F4F0] p-1 rounded-lg border border-[#E5E1DB] overflow-x-auto">
-                    <button type="button" data-filter="all" class="filter-tab active px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap">
-                        All (<span id="countAll">0</span>)
-                    </button>
-                    <button type="button" data-filter="Likely Delivered" class="filter-tab px-3 py-1.5 text-xs font-medium rounded-md transition-all text-[#686868] hover:text-[#252525] whitespace-nowrap">
-                        Likely Delivered (<span id="countDelivered">0</span>)
-                    </button>
-                    <button type="button" data-filter="Likely to Bounce" class="filter-tab px-3 py-1.5 text-xs font-medium rounded-md transition-all text-[#686868] hover:text-[#252525] whitespace-nowrap">
-                        Likely to Bounce (<span id="countBounce">0</span>)
-                    </button>
-                    <button type="button" data-filter="Unknown" class="filter-tab px-3 py-1.5 text-xs font-medium rounded-md transition-all text-[#686868] hover:text-[#252525] whitespace-nowrap">
-                        Unknown (<span id="countUnknown">0</span>)
-                    </button>
+                <div class="relative w-full sm:max-w-xs">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-[#77736D] absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Search by address or reason..." 
+                        class="w-full bg-[#F7F6F2]/60 border border-[#E8E5DF] rounded-xl pl-9 pr-3 py-2 text-xs font-sans text-[#262522] placeholder-[#77736D]/60 focus:outline-none focus:ring-1 focus:ring-[#B96332] focus:bg-[#FFFFFF] transition-all"
+                    />
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <div class="relative flex-1 md:w-64">
-                        <i data-lucide="search" class="w-4 h-4 text-[#686868] absolute left-3 top-1/2 -translate-y-1/2"></i>
-                        <input 
-                            type="text" 
-                            id="searchInput" 
-                            placeholder="Search address or domain..." 
-                            class="w-full bg-[#FFFFFF] border border-[#E5E1DB] rounded-lg pl-9 pr-3 py-1.5 text-xs text-[#252525] placeholder-[#686868]/60 focus:outline-none focus:ring-1 focus:ring-[#C66A32]"
-                        />
+                <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                    <div class="flex items-center gap-1 bg-[#F1F0EC] p-1 rounded-xl border border-[#E8E5DF]/60 overflow-x-auto">
+                        <button type="button" data-filter="all" class="filter-tab active bg-[#FFFFFF] text-[#262522] shadow-2xs font-semibold rounded-lg px-3 py-1.5 text-xs transition-all whitespace-nowrap">
+                            All
+                        </button>
+                        <button type="button" data-filter="Likely Deliverable" class="filter-tab text-[#77736D] hover:text-[#262522] font-medium rounded-lg px-3 py-1.5 text-xs transition-all whitespace-nowrap">
+                            Likely to be delivered
+                        </button>
+                        <button type="button" data-filter="Likely to Bounce" class="filter-tab text-[#77736D] hover:text-[#262522] font-medium rounded-lg px-3 py-1.5 text-xs transition-all whitespace-nowrap">
+                            Likely to bounce
+                        </button>
+                        <button type="button" data-filter="Unknown" class="filter-tab text-[#77736D] hover:text-[#262522] font-medium rounded-lg px-3 py-1.5 text-xs transition-all whitespace-nowrap">
+                            Unknown
+                        </button>
                     </div>
+
                     <button 
                         type="button" 
                         id="exportCsvBtn" 
-                        class="px-3.5 py-1.5 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#252525] hover:text-[#C66A32] border border-[#E5E1DB] font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap"
+                        class="px-3.5 py-2 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#262522] hover:text-[#B96332] border border-[#E8E5DF] font-sans font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-2xs shrink-0"
                     >
-                        <i data-lucide="download" class="w-3.5 h-3.5 text-[#C66A32]"></i>
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-[#B96332]"></i>
                         <span>Export CSV</span>
                     </button>
                 </div>
@@ -217,26 +262,26 @@
             </div>
 
             <!-- Results Table -->
-            <div class="bg-[#FFFFFF] rounded-xl border border-[#E5E1DB] overflow-hidden">
+            <div class="bg-[#FFFFFF] rounded-xl border border-[#E8E5DF] overflow-hidden shadow-2xs">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs border-collapse">
                         <thead>
-                            <tr class="bg-[#F5F4F0] border-b border-[#E5E1DB] text-[#686868] font-medium">
-                                <th class="py-3 px-4 w-12 text-center">#</th>
-                                <th class="py-3 px-4 min-w-[200px]">Email Address</th>
+                            <tr class="bg-[#F7F6F2] border-b border-[#E8E5DF] text-[#77736D] font-medium">
+                                <th class="py-3 px-4 w-10 text-center">#</th>
+                                <th class="py-3 px-4 min-w-[210px]">Email Address</th>
                                 <th class="py-3 px-4 min-w-[150px]">Status</th>
-                                <th class="py-3 px-4 min-w-[280px]">Reason & Details</th>
+                                <th class="py-3 px-4 min-w-[280px]">Reason & Assessment</th>
                                 <th class="py-3 px-4 min-w-[220px]">Checks Performed</th>
-                                <th class="py-3 px-4 w-24 text-right">Action</th>
+                                <th class="py-3 px-4 w-32 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="resultsTableBody" class="divide-y divide-[#E5E1DB]">
+                        <tbody id="resultsTableBody" class="divide-y divide-[#E8E5DF]">
                             <!-- Dynamically populated by script.js -->
                         </tbody>
                     </table>
                 </div>
 
-                <div id="noResultsState" class="hidden p-8 text-center text-[#686868] space-y-1">
+                <div id="noResultsState" class="hidden p-8 text-center text-[#77736D] space-y-1">
                     <p class="text-xs">No email addresses match your selected filter or search query.</p>
                 </div>
             </div>
@@ -246,13 +291,13 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#202020] text-[#F5F4F0] px-6 py-5 text-xs mt-auto">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <footer class="bg-[#F7F6F2] border-t border-[#E8E5DF] text-[#77736D] px-6 py-6 text-xs mt-auto">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-                <span class="font-bold text-white">MailMate</span> — Check first. Send smarter.
+                <span class="font-bold text-[#262522]">MailMate</span> — Check first. Send smarter.
             </div>
-            <div class="text-center sm:text-right text-[11px] text-[#A6A6A6] max-w-lg leading-relaxed">
-                Domain-level DNS and syntax checks confirm server routing configuration, but cannot guarantee individual mailbox existence or successful delivery.
+            <div class="text-center sm:text-right text-[11px] text-[#77736D] max-w-md leading-relaxed font-sans">
+                Domain-level DNS and syntax checks confirm server routing configuration, but cannot guarantee individual mailbox existence or final delivery.
             </div>
         </div>
     </footer>

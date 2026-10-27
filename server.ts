@@ -30,31 +30,31 @@ const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-
 
 function validateSyntax(email: string) {
   if (!email || typeof email !== 'string') {
-    return { ok: false, local: '', domain: '', error: 'Invalid Email Syntax: Empty or non-string email address.' };
+    return { ok: false, local: '', domain: '', error: 'Invalid email format. Enter an address with a valid local part and domain.' };
   }
   const clean = email.trim();
   if (clean.length > 254) {
-    return { ok: false, local: '', domain: '', error: 'Invalid Email Syntax: Email address exceeds maximum length of 254 characters.' };
+    return { ok: false, local: '', domain: '', error: 'Invalid email format. Email address exceeds maximum allowed length.' };
   }
   const parts = clean.split('@');
   if (parts.length !== 2) {
-    return { ok: false, local: '', domain: '', error: 'Invalid Email Syntax: Address must contain exactly one "@" symbol.' };
+    return { ok: false, local: '', domain: '', error: 'Invalid email format. Enter an address with a valid local part and domain.' };
   }
   const local = parts[0];
   const domain = parts[1].toLowerCase();
-  if (!local) return { ok: false, local: '', domain, error: 'Invalid Email Syntax: Missing local part before "@".' };
-  if (local.length > 64) return { ok: false, local, domain, error: 'Invalid Email Syntax: Local part exceeds maximum length of 64 characters.' };
-  if (!domain) return { ok: false, local, domain: '', error: 'Invalid Email Syntax: Missing domain part after "@".' };
-  if (domain.length > 255) return { ok: false, local, domain, error: 'Invalid Email Syntax: Domain name exceeds maximum length of 255 characters.' };
+  if (!local) return { ok: false, local: '', domain, error: 'Invalid email format. Enter an address with a valid local part and domain.' };
+  if (local.length > 64) return { ok: false, local, domain, error: 'Invalid email format. Local part before @ is too long.' };
+  if (!domain) return { ok: false, local, domain: '', error: 'Invalid email format. Add a domain after the @ symbol.' };
+  if (domain.length > 255) return { ok: false, local, domain, error: 'Invalid email format. Domain name is too long.' };
   if (domain.includes('..') || local.includes('..')) {
-    return { ok: false, local, domain, error: 'Invalid Email Syntax: Email contains invalid consecutive dots ("..").' };
+    return { ok: false, local, domain, error: 'Invalid email format. Check for consecutive dots or special characters.' };
   }
   if (!EMAIL_REGEX.test(clean)) {
-    return { ok: false, local, domain, error: 'Invalid Email Syntax: Address does not match standard RFC 5322 syntax format.' };
+    return { ok: false, local, domain, error: 'Invalid email format. Enter an address with a valid local part and domain.' };
   }
   const labels = domain.split('.');
   if (labels.length < 2 || labels[labels.length - 1].length < 2) {
-    return { ok: false, local, domain, error: 'Invalid Email Syntax: Domain must contain a valid top-level domain (TLD).' };
+    return { ok: false, local, domain, error: 'Invalid email format. Add a valid domain extension.' };
   }
   return { ok: true, local, domain, error: '' };
 }
@@ -239,11 +239,11 @@ async function evaluateEmail(emailStr: string) {
 
   // Case 2: DNS Error, Timeout, or SERVFAIL -> Unknown (Never report as NXDOMAIN or Bounce)
   if (dnsRes.dns_error && !dnsRes.dns_error.includes('NXDOMAIN')) {
-    let reasonText = 'DNS lookup was inconclusive; mailbox existence cannot be confirmed.';
+    let reasonText = 'DNS lookup was inconclusive. Deliverability remains unknown.';
     if (dnsRes.dns_status === 'TIMEOUT') {
-      reasonText = 'The DNS lookup timed out. Deliverability could not be determined.';
+      reasonText = 'DNS check timed out. Deliverability remains unknown.';
     } else if (dnsRes.dns_status === 'DNS_SERVER_ERROR') {
-      reasonText = "The domain's DNS server returned an error (SERVFAIL).";
+      reasonText = 'DNS server error occurred. Deliverability remains unknown.';
     }
     return {
       email: clean,
@@ -273,7 +273,7 @@ async function evaluateEmail(emailStr: string) {
       email: clean,
       domain: syn.domain,
       status: 'Likely to Bounce',
-      reason: 'The email domain does not exist in DNS.',
+      reason: 'No DNS domain found. This address is unlikely to receive email.',
       checks_performed: checks,
       mailbox_verified: false
     };
@@ -285,7 +285,7 @@ async function evaluateEmail(emailStr: string) {
       email: clean,
       domain: syn.domain,
       status: 'Likely to Bounce',
-      reason: 'Domain exists but has no mail-routing or server host records.',
+      reason: 'No MX records found. Additional routing checks are needed before determining deliverability.',
       checks_performed: checks,
       mailbox_verified: false
     };
@@ -320,7 +320,7 @@ async function evaluateEmail(emailStr: string) {
     email: clean,
     domain: syn.domain,
     status: 'Unknown',
-    reason: 'DNS lookup was inconclusive; mailbox existence cannot be confirmed.',
+    reason: 'DNS lookup was inconclusive. Deliverability remains unknown.',
     checks_performed: checks,
     mailbox_verified: false
   };
@@ -363,7 +363,7 @@ app.post('/api/check', async (req, res) => {
   }
 
   if (emailList.length === 0) {
-    return res.status(400).json({ error: "No valid email strings extracted from input." });
+    return res.status(400).json({ error: "Add at least one email address to continue." });
   }
 
   if (emailList.length > 100) {
