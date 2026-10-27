@@ -54,6 +54,64 @@ interface SummaryStats {
   invalid_format: number;
 }
 
+export function normalizeStatus(rawStatus?: string | null): 'Likely Deliverable' | 'Likely to Bounce' | 'Unknown' | 'Invalid Format' {
+  if (!rawStatus) return 'Unknown';
+  const clean = String(rawStatus).trim().toLowerCase().replace(/[_\s-]+/g, ' ');
+  if (
+    clean === 'likely deliverable' ||
+    clean === 'likely delivered' ||
+    clean === 'likely to be delivered' ||
+    clean === 'deliverable' ||
+    clean === 'delivered'
+  ) {
+    return 'Likely Deliverable';
+  }
+  if (
+    clean === 'likely to bounce' ||
+    clean === 'bounce' ||
+    clean === 'bounced'
+  ) {
+    return 'Likely to Bounce';
+  }
+  if (
+    clean === 'invalid format' ||
+    clean === 'invalid' ||
+    clean === 'invalid syntax'
+  ) {
+    return 'Invalid Format';
+  }
+  return 'Unknown';
+}
+
+export function calculateKPIsFromResults(resultsList: EmailResult[]): SummaryStats {
+  const total = resultsList.length;
+  let likely_deliverable = 0;
+  let likely_to_bounce = 0;
+  let unknown = 0;
+  let invalid_format = 0;
+
+  for (const item of resultsList) {
+    const norm = normalizeStatus(item.status);
+    if (norm === 'Likely Deliverable') {
+      likely_deliverable++;
+    } else if (norm === 'Likely to Bounce') {
+      likely_to_bounce++;
+    } else if (norm === 'Unknown') {
+      unknown++;
+    } else if (norm === 'Invalid Format') {
+      invalid_format++;
+    }
+  }
+
+  return {
+    total,
+    likely_deliverable,
+    likely_to_bounce,
+    unknown,
+    invalid_format
+  };
+}
+
 const SAMPLE_BATCH = [
   'alex@example.com',
   'hello@example.org',
@@ -70,13 +128,20 @@ export default function App() {
   // Input starts completely empty on initial load
   const [inputText, setInputText] = useState('');
   const [results, setResults] = useState<EmailResult[]>([]);
-  const [summary, setSummary] = useState<SummaryStats | null>(null);
+  const [hasRunCheck, setHasRunCheck] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'Likely Deliverable' | 'Likely to Bounce' | 'Unknown' | 'Invalid Format'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [inspectItem, setInspectItem] = useState<EmailResult | null>(null);
+
+  // Calculate every KPI directly from the complete processed results array (results),
+  // NOT from filteredResults (the currently filtered or searched table).
+  const summary = useMemo<SummaryStats | null>(() => {
+    if (!hasRunCheck && results.length === 0) return null;
+    return calculateKPIsFromResults(results);
+  }, [results, hasRunCheck]);
 
   // Extract non-empty email tokens
   const extractedEmails = useMemo(() => {
@@ -110,14 +175,14 @@ export default function App() {
         throw new Error(data.error || "We couldn't complete this check. Please try again.");
       }
 
-      setResults(data.results || []);
-      setSummary({
-        total: data.summary?.total ?? data.results?.length ?? 0,
-        likely_deliverable: data.summary?.likely_deliverable ?? data.summary?.likely_delivered ?? data.results?.filter((r: EmailResult) => r.status === 'Likely Deliverable').length ?? 0,
-        likely_to_bounce: data.summary?.likely_to_bounce ?? data.results?.filter((r: EmailResult) => r.status === 'Likely to Bounce').length ?? 0,
-        unknown: data.summary?.unknown ?? data.results?.filter((r: EmailResult) => r.status === 'Unknown').length ?? 0,
-        invalid_format: data.summary?.invalid_format ?? data.results?.filter((r: EmailResult) => r.status === 'Invalid Format').length ?? 0
-      });
+      const rawResults = data.results || [];
+      const normalizedResults: EmailResult[] = rawResults.map((item: any) => ({
+        ...item,
+        status: normalizeStatus(item.status)
+      }));
+
+      setResults(normalizedResults);
+      setHasRunCheck(true);
       setActiveTab('all');
     } catch (err: any) {
       setErrorMsg(err.message || "We couldn't complete this check. Please try again.");
@@ -129,9 +194,10 @@ export default function App() {
   const handleClearAll = () => {
     setInputText('');
     setResults([]);
-    setSummary(null);
+    setHasRunCheck(false);
     setErrorMsg(null);
     setSearchQuery('');
+    setActiveTab('all');
   };
 
   const handleCopy = (text: string, idx: number) => {
@@ -142,7 +208,8 @@ export default function App() {
 
   const filteredResults = useMemo(() => {
     return results.filter(item => {
-      if (activeTab !== 'all' && item.status !== activeTab) {
+      const itemStatus = normalizeStatus(item.status);
+      if (activeTab !== 'all' && itemStatus !== activeTab) {
         return false;
       }
       if (searchQuery.trim()) {

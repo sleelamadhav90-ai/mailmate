@@ -146,8 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.error || "We couldn't complete this check. Please try again.");
             }
 
-            currentResults = data.results || [];
-            updateSummaryKPIs(data.summary || {});
+            const rawResults = data.results || [];
+            currentResults = rawResults.map(item => ({
+                ...item,
+                status: normalizeStatus(item.status)
+            }));
+            updateSummaryKPIs();
             renderTable();
             if (resultsSection) resultsSection.classList.remove('hidden');
             
@@ -167,12 +171,54 @@ document.addEventListener('DOMContentLoaded', () => {
         checkBtn.addEventListener('click', runCheck);
     }
 
-    function updateSummaryKPIs(summary) {
-        const total = summary.total || currentResults.length || 0;
-        const delivCount = summary.likely_deliverable ?? summary.likely_delivered ?? 0;
-        const bounceCount = summary.likely_to_bounce || 0;
-        const unknownCount = summary.unknown || 0;
-        const invalidCount = summary.invalid_format || 0;
+    function normalizeStatus(rawStatus) {
+        if (!rawStatus) return 'Unknown';
+        const clean = String(rawStatus).trim().toLowerCase().replace(/[_\s-]+/g, ' ');
+        if (
+            clean === 'likely deliverable' ||
+            clean === 'likely delivered' ||
+            clean === 'likely to be delivered' ||
+            clean === 'deliverable' ||
+            clean === 'delivered'
+        ) {
+            return 'Likely Deliverable';
+        }
+        if (
+            clean === 'likely to bounce' ||
+            clean === 'bounce' ||
+            clean === 'bounced'
+        ) {
+            return 'Likely to Bounce';
+        }
+        if (
+            clean === 'invalid format' ||
+            clean === 'invalid' ||
+            clean === 'invalid syntax'
+        ) {
+            return 'Invalid Format';
+        }
+        return 'Unknown';
+    }
+
+    function updateSummaryKPIs() {
+        const total = currentResults.length;
+        let delivCount = 0;
+        let bounceCount = 0;
+        let unknownCount = 0;
+        let invalidCount = 0;
+
+        for (const item of currentResults) {
+            const st = normalizeStatus(item.status);
+            if (st === 'Likely Deliverable') {
+                delivCount++;
+            } else if (st === 'Likely to Bounce') {
+                bounceCount++;
+            } else if (st === 'Unknown') {
+                unknownCount++;
+            } else if (st === 'Invalid Format') {
+                invalidCount++;
+            }
+        }
 
         const statTotal = document.getElementById('statTotal');
         const statDelivered = document.getElementById('statDelivered');

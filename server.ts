@@ -328,6 +328,35 @@ app.get('/health', (req, res) => {
   });
 });
 
+export function normalizeStatus(rawStatus?: string | null): 'Likely Deliverable' | 'Likely to Bounce' | 'Unknown' | 'Invalid Format' {
+  if (!rawStatus) return 'Unknown';
+  const clean = String(rawStatus).trim().toLowerCase().replace(/[_\s-]+/g, ' ');
+  if (
+    clean === 'likely deliverable' ||
+    clean === 'likely delivered' ||
+    clean === 'likely to be delivered' ||
+    clean === 'deliverable' ||
+    clean === 'delivered'
+  ) {
+    return 'Likely Deliverable';
+  }
+  if (
+    clean === 'likely to bounce' ||
+    clean === 'bounce' ||
+    clean === 'bounced'
+  ) {
+    return 'Likely to Bounce';
+  }
+  if (
+    clean === 'invalid format' ||
+    clean === 'invalid' ||
+    clean === 'invalid syntax'
+  ) {
+    return 'Invalid Format';
+  }
+  return 'Unknown';
+}
+
 // Batch Check API Endpoint
 app.post('/api/check', async (req, res) => {
   const rawInput = req.body?.emails;
@@ -361,26 +390,38 @@ app.post('/api/check', async (req, res) => {
   }
 
   const results = [];
-  const summary = {
-    total: emailList.length,
-    likely_deliverable: 0,
-    likely_delivered: 0, // legacy alias
-    likely_to_bounce: 0,
-    unknown: 0,
-    invalid_format: 0
-  };
-
   for (const emailStr of emailList) {
     const evalRes = await evaluateEmail(emailStr);
+    evalRes.status = normalizeStatus(evalRes.status);
     results.push(evalRes);
+  }
 
-    const key = evalRes.status.toLowerCase().replace(/ /g, '_');
-    if (key in summary) {
-      (summary as any)[key]++;
+  let likely_deliverable = 0;
+  let likely_to_bounce = 0;
+  let unknown = 0;
+  let invalid_format = 0;
+
+  for (const r of results) {
+    const st = normalizeStatus(r.status);
+    if (st === 'Likely Deliverable') {
+      likely_deliverable++;
+    } else if (st === 'Likely to Bounce') {
+      likely_to_bounce++;
+    } else if (st === 'Unknown') {
+      unknown++;
+    } else if (st === 'Invalid Format') {
+      invalid_format++;
     }
   }
-  // Sync legacy alias
-  summary.likely_delivered = summary.likely_deliverable;
+
+  const summary = {
+    total: emailList.length,
+    likely_deliverable,
+    likely_delivered: likely_deliverable, // legacy alias
+    likely_to_bounce,
+    unknown,
+    invalid_format
+  };
 
   res.json({
     total: emailList.length,

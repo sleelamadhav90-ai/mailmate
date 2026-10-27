@@ -355,20 +355,33 @@ def check_emails_api():
         }), 400
     
     results = []
-    summary = {
-        "total": len(email_list),
-        "likely_delivered": 0,
-        "likely_to_bounce": 0,
-        "unknown": 0
-    }
-    
     for email_str in email_list:
         res = evaluate_email_deliverability(email_str)
+        st = (res.get("status") or "").strip().lower()
+        st_clean = re.sub(r'[\s_-]+', ' ', st)
+        if st_clean in ["likely deliverable", "likely delivered", "likely to be delivered", "delivered", "deliverable"]:
+            res["status"] = "Likely Deliverable"
+        elif st_clean in ["likely to bounce", "bounce", "bounced"]:
+            res["status"] = "Likely to Bounce"
+        elif st_clean in ["invalid format", "invalid", "invalid syntax"]:
+            res["status"] = "Invalid Format"
+        else:
+            res["status"] = "Unknown"
         results.append(res)
-        
-        status_key = res["status"].lower().replace(" ", "_")
-        if status_key in summary:
-            summary[status_key] += 1
+    
+    deliv_count = sum(1 for r in results if r["status"] == "Likely Deliverable")
+    bounce_count = sum(1 for r in results if r["status"] == "Likely to Bounce")
+    unknown_count = sum(1 for r in results if r["status"] == "Unknown")
+    invalid_count = sum(1 for r in results if r["status"] == "Invalid Format")
+
+    summary = {
+        "total": len(email_list),
+        "likely_deliverable": deliv_count,
+        "likely_delivered": deliv_count,
+        "likely_to_bounce": bounce_count,
+        "unknown": unknown_count,
+        "invalid_format": invalid_count
+    }
     
     return jsonify({
         "total": len(email_list),
