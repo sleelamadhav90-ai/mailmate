@@ -19,7 +19,8 @@ import {
   AlertTriangle,
   Inbox,
   Layers,
-  Filter
+  Filter,
+  FileText
 } from 'lucide-react';
 
 interface CheckPerformed {
@@ -205,30 +206,30 @@ export default function App() {
     switch (status) {
       case 'Likely Deliverable':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#EAF4EE] text-[#39775B] border border-[#39775B]/20 shrink-0 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#39775B]"></span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-medium bg-[#D4EAD9] text-[#2B5C40] border border-[#B9DCC0] shrink-0 whitespace-nowrap">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#2B5C40]"></span>
             <span>Likely Deliverable</span>
           </span>
         );
       case 'Likely to Bounce':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#FBF0EF] text-[#B84C43] border border-[#B84C43]/20 shrink-0 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#B84C43]"></span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-medium bg-[#FADBD8] text-[#902A24] border border-[#F5B7B1] shrink-0 whitespace-nowrap">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#902A24]"></span>
             <span>Likely to Bounce</span>
           </span>
         );
       case 'Unknown':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#F8EEE6] text-[#A87530] border border-[#A87530]/20 shrink-0 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#A87530]"></span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-medium bg-[#FDEBD0] text-[#7E5109] border border-[#FAD7A0] shrink-0 whitespace-nowrap">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#7E5109]"></span>
             <span>Unknown</span>
           </span>
         );
       case 'Invalid Format':
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#F7F6F2] text-[#77736D] border border-[#E8E5DF] shrink-0 whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#77736D]"></span>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-medium bg-[#EFECE6] text-[#5C5955] border border-[#E2DDD5] shrink-0 whitespace-nowrap">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#5C5955]"></span>
             <span>Invalid Format</span>
           </span>
         );
@@ -239,74 +240,74 @@ export default function App() {
     return (
       <div className="flex flex-wrap gap-1.5">
         {c.syntax_valid ? (
-          <span className="px-2 py-0.5 rounded bg-[#F7F6F2] text-[#262522] text-[11px] font-sans font-medium border border-[#E8E5DF]">Syntax · Valid</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#4A4742] text-[11px] font-sans font-medium border border-[#E2DDD5] whitespace-nowrap">Syntax · Valid</span>
         ) : (
-          <span className="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] text-[11px] font-sans font-medium border border-[#B84C43]/20">Syntax · Invalid</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FADBD8] text-[#902A24] text-[11px] font-sans font-medium border border-[#F5B7B1] whitespace-nowrap">Syntax · Invalid</span>
         )}
 
         {c.dns_status === 'Skipped (Invalid Syntax)' || !c.syntax_valid ? (
-          <span className="px-2 py-0.5 rounded bg-[#F7F6F2] text-[#77736D] text-[11px] font-sans font-medium border border-[#E8E5DF]">DNS · Not Checked</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#686868] text-[11px] font-sans font-medium border border-[#E2DDD5] whitespace-nowrap">DNS · Not Checked</span>
         ) : c.dns_status === 'TIMEOUT' ? (
-          <span className="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A87530] text-[11px] font-sans font-medium border border-[#A87530]/20">DNS · Timed Out</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FDEBD0] text-[#7E5109] text-[11px] font-sans font-medium border border-[#FAD7A0] whitespace-nowrap">DNS · Timed Out</span>
         ) : c.dns_status === 'DNS_SERVER_ERROR' ? (
-          <span className="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A87530] text-[11px] font-sans font-medium border border-[#A87530]/20">DNS · Error</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FDEBD0] text-[#7E5109] text-[11px] font-sans font-medium border border-[#FAD7A0] whitespace-nowrap">DNS · Error</span>
         ) : c.domain_exists ? (
-          <span className="px-2 py-0.5 rounded bg-[#F7F6F2] text-[#262522] text-[11px] font-sans font-medium border border-[#E8E5DF]">DNS · Resolved</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#4A4742] text-[11px] font-sans font-medium border border-[#E2DDD5] whitespace-nowrap">DNS · Resolved</span>
         ) : (
-          <span className="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] text-[11px] font-sans font-medium border border-[#B84C43]/20">DNS · Not Found</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FADBD8] text-[#902A24] text-[11px] font-sans font-medium border border-[#F5B7B1] whitespace-nowrap">DNS · Not Found</span>
         )}
 
         {!c.syntax_valid ? (
-          <span className="px-2 py-0.5 rounded bg-[#F7F6F2] text-[#77736D] text-[11px] font-sans font-medium border border-[#E8E5DF]">MX · Not Checked</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#EFECE6] text-[#686868] text-[11px] font-sans font-medium border border-[#E2DDD5] whitespace-nowrap">MX · Not Checked</span>
         ) : c.mx_records_found ? (
-          <span className="px-2 py-0.5 rounded bg-[#EAF4EE] text-[#39775B] text-[11px] font-sans font-medium border border-[#39775B]/20">MX · Found</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#D4EAD9] text-[#2B5C40] text-[11px] font-sans font-medium border border-[#B9DCC0] whitespace-nowrap">MX · Found</span>
         ) : c.is_null_mx ? (
-          <span className="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] text-[11px] font-sans font-medium border border-[#B84C43]/20">MX · Null MX</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FADBD8] text-[#902A24] text-[11px] font-sans font-medium border border-[#F5B7B1] whitespace-nowrap">MX · Null MX</span>
         ) : c.has_fallback_a ? (
-          <span className="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A87530] text-[11px] font-sans font-medium border border-[#A87530]/20">MX · Fallback A</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FDEBD0] text-[#7E5109] text-[11px] font-sans font-medium border border-[#FAD7A0] whitespace-nowrap">MX · Fallback A</span>
         ) : c.domain_exists === false ? (
-          <span className="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] text-[11px] font-sans font-medium border border-[#B84C43]/20">MX · Not Found</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FADBD8] text-[#902A24] text-[11px] font-sans font-medium border border-[#F5B7B1] whitespace-nowrap">MX · Not Found</span>
         ) : (
-          <span className="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#A87530] text-[11px] font-sans font-medium border border-[#A87530]/20">MX · Inconclusive</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FDEBD0] text-[#7E5109] text-[11px] font-sans font-medium border border-[#FAD7A0] whitespace-nowrap">MX · Inconclusive</span>
         )}
 
         {c.disposable_domain && (
-          <span className="px-2 py-0.5 rounded bg-[#FBF0EF] text-[#B84C43] text-[11px] font-sans font-medium border border-[#B84C43]/20">Disposable Domain</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#FADBD8] text-[#902A24] text-[11px] font-sans font-medium border border-[#F5B7B1] whitespace-nowrap">Disposable Domain</span>
         )}
 
         {c.role_account && (
-          <span className="px-2 py-0.5 rounded bg-[#F8EEE6] text-[#B96332] text-[11px] font-sans font-medium border border-[#E8E5DF]">Role Address</span>
+          <span className="px-2.5 py-1 rounded-full bg-[#F8EEE6] text-[#C66A32] text-[11px] font-sans font-medium border border-[#E8E5DF] whitespace-nowrap">Role Address</span>
         )}
       </div>
     );
   };
 
   return (
-    <div className="bg-[#F7F6F2] text-[#262522] min-h-screen font-sans flex flex-col antialiased">
+    <div className="bg-[#F6F3EB] text-[#1F1C18] min-h-screen font-sans flex flex-col antialiased">
       
-      {/* 1. Top Navigation Bar — Strict One-Row 3-Zone Contract */}
-      <header className="bg-[#FFFFFF] border-b border-[#E8E5DF] px-6 py-4 sticky top-0 z-30">
+      {/* 1. Top Navigation Bar — Soft Warm Luxury Header */}
+      <header className="bg-[#FAF7F0]/90 backdrop-blur-md border-b border-[#E8E2D5] px-6 py-4 sticky top-0 z-30">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-8">
           
-          {/* Zone 1: Single text element wordmark */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            <div className="w-7 h-7 rounded bg-[#F8EEE6] border border-[#E8E5DF] flex items-center justify-center text-[#B96332]">
+          {/* Zone 1: Logo inside warm soft pill container */}
+          <div className="flex items-center gap-2.5 shrink-0 bg-[#EFECE4] border border-[#D9D0C1] px-3.5 py-1.5 rounded-2xl shadow-2xs">
+            <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-[#D9C09E] to-[#C4A47C] flex items-center justify-center text-[#3D2914] shadow-2xs">
               <Mail className="w-3.5 h-3.5" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-[#262522] whitespace-nowrap">
+            <span className="text-base font-bold tracking-tight text-[#1F1C18] whitespace-nowrap">
               MailMate
             </span>
           </div>
 
-          {/* Zone 2: Quiet tagline metadata */}
-          <div className="hidden sm:flex items-center text-xs font-normal text-[#77736D] whitespace-nowrap">
+          {/* Zone 2: Centered quiet tagline */}
+          <div className="hidden sm:flex items-center text-xs font-medium text-[#787167] whitespace-nowrap tracking-wide">
             <span>Check first. Send smarter.</span>
           </div>
 
-          {/* Zone 3: Privacy indicator */}
+          {/* Zone 3: Privacy indicator badge */}
           <div className="flex items-center gap-2 shrink-0">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F7F6F2] text-[#77736D] border border-[#E8E5DF] text-[11px] whitespace-nowrap">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#39775B]" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] text-[#6B573B] border border-[#C6A87C]/50 text-[11px] font-medium shadow-2xs whitespace-nowrap">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#2B5C40]" />
               <span>Privacy-first checks</span>
             </div>
           </div>
@@ -315,105 +316,124 @@ export default function App() {
       </header>
 
       {/* Main Editorial Canvas Container */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-6 py-10 space-y-12">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-6 py-10 space-y-10">
         
-        {/* 2. Hero & Purpose Section — Unboxed, Editorial */}
-        <section className="space-y-3">
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-[44px] leading-tight text-[#262522] tracking-tight">
+        {/* 2. Hero & Purpose Section — Warm Editorial Aesthetics */}
+        <section className="space-y-4">
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl leading-tight text-[#1C1917] tracking-tight">
             Know which emails need a closer look.
           </h1>
-          <p className="text-[#77736D] text-sm sm:text-base max-w-xl font-normal leading-relaxed">
+          <p className="text-[#6E675F] text-sm sm:text-base max-w-xl font-normal leading-relaxed">
             Assess a list of email addresses and understand which are likely deliverable, likely to bounce, or have an unknown status.
           </p>
-          <div className="pt-1 flex items-center gap-2 text-xs text-[#77736D]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#39775B]"></span>
-            <span>No emails sent</span>
-            <span className="text-[#E8E5DF]">·</span>
-            <span>No mailbox access required</span>
+          
+          {/* Feature Pill Badges */}
+          <div className="pt-2 space-y-2">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#5E482D]">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
+                <CheckCircle2 className="w-3.5 h-3.5 text-[#2B5C40]" />
+                <span>Identify Deliverable</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
+                <XCircle className="w-3.5 h-3.5 text-[#902A24]" />
+                <span>Detect Bounces</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFECE4] border border-[#C6A87C]/70 shadow-2xs">
+                <HelpCircle className="w-3.5 h-3.5 text-[#7E5109]" />
+                <span>Understand Unknowns</span>
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 text-xs text-[#787167] pt-1">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EFECE4]/80 border border-[#D9D0C1]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#2B5C40]"></span>
+                <span>No emails sent</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#EFECE4]/80 border border-[#D9D0C1]">
+                <Mail className="w-3 h-3 text-[#787167]" />
+                <span>No mailbox access required</span>
+              </span>
+            </div>
           </div>
         </section>
 
-        {/* 3. Primary Interactive Input Area — Single Refined White Surface */}
-        <section className="bg-[#FFFFFF] rounded-xl border border-[#E8E5DF] p-6 space-y-4 shadow-2xs">
+        {/* 3. Primary Interactive Input Area — Golden Framed Container */}
+        <section className="bg-[#FAF7F0] rounded-[2rem] border-2 border-[#C6A87C]/60 p-6 sm:p-7 space-y-5 shadow-[0_12px_40px_rgba(180,140,80,0.12)] relative">
           
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <label htmlFor="emailInput" className="text-sm font-semibold text-[#262522] block font-sans">
+              <label htmlFor="emailInput" className="text-sm font-semibold text-[#1C1917] block font-sans">
                 Email addresses
               </label>
-              <p className="text-xs text-[#77736D] font-sans">Paste addresses separated by newlines, commas, or semicolons.</p>
+              <p className="text-xs text-[#787167] font-sans">Paste addresses separated by newlines, commas, or semicolons.</p>
             </div>
 
-            {/* Secondary actions as clean text buttons */}
+            {/* Top-Right Secondary Action Group */}
             <div className="flex items-center gap-3 text-xs font-sans">
               <button 
                 type="button" 
                 onClick={() => setInputText(SAMPLE_BATCH)}
-                className="text-[#77736D] hover:text-[#B96332] transition-colors flex items-center gap-1 cursor-pointer font-medium"
+                className="bg-gradient-to-r from-[#D9C09E] to-[#C4A47C] hover:from-[#CCA87B] hover:to-[#B89363] text-[#3D2914] px-3.5 py-1.5 rounded-full font-semibold transition-all flex items-center gap-1.5 cursor-pointer border border-[#C4A47C]/70 shadow-xs"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#B96332]" />
+                <Sparkles className="w-3.5 h-3.5 text-[#3D2914]" />
                 <span>Load sample data</span>
               </button>
               {inputText.length > 0 && (
-                <>
-                  <span className="text-[#E8E5DF]">|</span>
-                  <button 
-                    type="button" 
-                    onClick={handleClearAll}
-                    className="text-[#77736D] hover:text-[#B84C43] transition-colors cursor-pointer font-medium"
-                  >
-                    Clear
-                  </button>
-                </>
+                <button 
+                  type="button" 
+                  onClick={handleClearAll}
+                  className="text-[#787167] hover:text-[#902A24] transition-colors cursor-pointer font-medium px-2 py-1"
+                >
+                  Clear
+                </button>
               )}
             </div>
           </div>
 
-          {/* Clean Textarea */}
-          <div className="relative">
+          {/* Inset Rounded Textarea Box */}
+          <div className="bg-[#EFECE4] border border-[#D9D0C1] rounded-2xl p-3.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.04)] focus-within:ring-2 focus-within:ring-[#B88A4C] focus-within:border-[#B88A4C] transition-all">
             <textarea 
               id="emailInput"
-              rows={6}
+              rows={5}
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="Paste email addresses here, one per line..."
-              className="w-full bg-[#FFFFFF] border border-[#E8E5DF] rounded-lg p-4 text-xs sm:text-sm font-mono text-[#262522] placeholder-[#77736D]/40 focus:outline-none focus:ring-1 focus:ring-[#B96332] focus:border-[#B96332] transition-all resize-y"
+              className="w-full bg-transparent border-0 text-xs sm:text-sm font-mono text-[#1C1917] placeholder-[#787167]/60 focus:outline-none resize-y"
             />
           </div>
 
           {errorMsg && (
-            <div className="bg-[#FBF0EF] border border-[#B84C43]/20 rounded-lg p-3 text-[#B84C43] text-xs font-sans flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-[#B84C43]" />
+            <div className="bg-[#FDF2F2] border border-[#B84C43]/30 rounded-xl p-3 text-[#902A24] text-xs font-sans flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-[#902A24]" />
               <span>{errorMsg}</span>
             </div>
           )}
 
-          {/* Single Clear Primary Action Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
-            <div className="text-xs font-mono text-[#77736D]">
-              <span className={extractedEmails.length > 100 ? 'text-[#B84C43] font-semibold' : 'font-medium'}>
-                {extractedEmails.length}
-              </span> / 100 max addresses
-            </div>
-
+          {/* Primary Action Button Row — Center Elevated Golden CTA */}
+          <div className="flex flex-col items-center justify-center gap-3 pt-2">
             <button 
               type="button" 
               onClick={handleRunCheck}
               disabled={loading}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#B96332] hover:bg-[#A35427] text-white font-sans font-medium text-xs sm:text-sm rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-2xs"
+              className="bg-gradient-to-b from-[#7A4B1B] via-[#8C5824] to-[#593410] hover:brightness-110 active:scale-98 text-[#FFF9F2] font-sans font-semibold text-sm px-9 py-3 rounded-full transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed border border-[#D9B382]/60 shadow-[0_8px_24px_rgba(120,70,20,0.35)]"
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin text-white" />
-                  <span>Checking addresses...</span>
+                  <Loader2 className="w-4 h-4 animate-spin text-[#FFF9F2]" />
+                  <span>Assessing addresses...</span>
                 </>
               ) : (
                 <>
-                  <Search className="w-4 h-4 text-white" />
-                  <span>Check emails</span>
+                  <span>Assess List</span>
                 </>
               )}
             </button>
+
+            <div className="text-[11px] font-mono text-[#787167]">
+              <span className={extractedEmails.length > 100 ? 'text-[#902A24] font-semibold' : 'font-medium'}>
+                {extractedEmails.length}
+              </span> / 100 max addresses
+            </div>
           </div>
         </section>
 
@@ -544,31 +564,31 @@ export default function App() {
 
             </div>
 
-            {/* 6. Results Toolbar — Streamlined Toolbar Card with Search, Segmented Control, and Export CSV */}
-            <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8E5DF] p-3 sm:p-4 shadow-2xs space-y-3 sm:space-y-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
+            {/* 6. Results Toolbar — Streamlined Rounded Card with Capsule Tabs matching screenshot */}
+            <div className="bg-[#FAF8F5] rounded-3xl border border-[#E8E4DC] p-3 sm:p-3.5 shadow-2xs space-y-3 sm:space-y-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-sans">
               
               {/* Left side: Search bar with magnifying glass */}
-              <div className="relative w-full sm:max-w-xs">
-                <Search className="w-3.5 h-3.5 text-[#77736D] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <div className="relative w-full sm:w-80">
+                <Search className="w-3.5 h-3.5 text-[#686868] absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input 
                   type="text" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search by address or reason..." 
-                  className="w-full bg-[#F7F6F2]/60 border border-[#E8E5DF] rounded-xl pl-9 pr-3 py-2 text-xs font-sans text-[#262522] placeholder-[#77736D]/60 focus:outline-none focus:ring-1 focus:ring-[#B96332] focus:bg-[#FFFFFF] transition-all"
+                  placeholder="Search by email address or status reason..." 
+                  className="w-full bg-[#EFECE6] border border-[#E2DDD5] rounded-full pl-9 pr-4 py-2 text-xs font-sans text-[#252525] placeholder-[#686868]/70 focus:outline-none focus:ring-1 focus:ring-[#C66A32] focus:bg-[#FFFFFF] transition-all"
                 />
               </div>
 
               {/* Right side: Segmented tab capsule + Export CSV */}
               <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                <div className="flex items-center gap-1 bg-[#F1F0EC] p-1 rounded-xl border border-[#E8E5DF]/60 overflow-x-auto">
+                <div className="flex items-center gap-1 bg-[#E5E1DA] p-1 rounded-full border border-[#DDD8CF] overflow-x-auto">
                   <button
                     type="button"
                     onClick={() => setActiveTab('all')}
-                    className={`px-3 py-1.5 text-xs font-sans rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                    className={`px-4 py-1.5 text-xs font-sans rounded-full transition-all whitespace-nowrap cursor-pointer ${
                       activeTab === 'all' 
-                        ? 'bg-[#FFFFFF] text-[#262522] shadow-2xs font-semibold' 
-                        : 'text-[#77736D] hover:text-[#262522] font-medium'
+                        ? 'bg-[#FFFFFF] text-[#252525] shadow-xs font-semibold' 
+                        : 'text-[#5C5955] hover:text-[#252525] font-medium'
                     }`}
                   >
                     All
@@ -576,10 +596,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setActiveTab('Likely Deliverable')}
-                    className={`px-3 py-1.5 text-xs font-sans rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                    className={`px-3.5 py-1.5 text-xs font-sans rounded-full transition-all whitespace-nowrap cursor-pointer ${
                       activeTab === 'Likely Deliverable' 
-                        ? 'bg-[#FFFFFF] text-[#39775B] shadow-2xs font-semibold' 
-                        : 'text-[#77736D] hover:text-[#262522] font-medium'
+                        ? 'bg-[#FFFFFF] text-[#2B5C40] shadow-xs font-semibold' 
+                        : 'text-[#5C5955] hover:text-[#252525] font-medium'
                     }`}
                   >
                     Likely to be delivered
@@ -587,10 +607,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setActiveTab('Likely to Bounce')}
-                    className={`px-3 py-1.5 text-xs font-sans rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                    className={`px-3.5 py-1.5 text-xs font-sans rounded-full transition-all whitespace-nowrap cursor-pointer ${
                       activeTab === 'Likely to Bounce' 
-                        ? 'bg-[#FFFFFF] text-[#B84C43] shadow-2xs font-semibold' 
-                        : 'text-[#77736D] hover:text-[#262522] font-medium'
+                        ? 'bg-[#FFFFFF] text-[#902A24] shadow-xs font-semibold' 
+                        : 'text-[#5C5955] hover:text-[#252525] font-medium'
                     }`}
                   >
                     Likely to bounce
@@ -598,10 +618,10 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => setActiveTab('Unknown')}
-                    className={`px-3 py-1.5 text-xs font-sans rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                    className={`px-3.5 py-1.5 text-xs font-sans rounded-full transition-all whitespace-nowrap cursor-pointer ${
                       activeTab === 'Unknown' 
-                        ? 'bg-[#FFFFFF] text-[#A87530] shadow-2xs font-semibold' 
-                        : 'text-[#77736D] hover:text-[#262522] font-medium'
+                        ? 'bg-[#FFFFFF] text-[#7E5109] shadow-xs font-semibold' 
+                        : 'text-[#5C5955] hover:text-[#252525] font-medium'
                     }`}
                   >
                     Unknown
@@ -610,10 +630,10 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setActiveTab('Invalid Format')}
-                      className={`px-3 py-1.5 text-xs font-sans rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                      className={`px-3.5 py-1.5 text-xs font-sans rounded-full transition-all whitespace-nowrap cursor-pointer ${
                         activeTab === 'Invalid Format' 
-                          ? 'bg-[#FFFFFF] text-[#77736D] shadow-2xs font-semibold' 
-                          : 'text-[#77736D] hover:text-[#262522] font-medium'
+                          ? 'bg-[#FFFFFF] text-[#5C5955] shadow-xs font-semibold' 
+                          : 'text-[#5C5955] hover:text-[#252525] font-medium'
                       }`}
                     >
                       Invalid Format
@@ -624,77 +644,77 @@ export default function App() {
                 <button 
                   type="button" 
                   onClick={handleExportCsv}
-                  className="px-3.5 py-2 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#262522] hover:text-[#B96332] border border-[#E8E5DF] font-sans font-semibold text-xs rounded-xl transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-2xs"
+                  className="px-4 py-2 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#252522] hover:text-[#C66A32] border border-[#E2DDD5] font-sans font-medium text-xs rounded-full transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer shadow-2xs"
                 >
-                  <Download className="w-3.5 h-3.5 text-[#B96332]" />
+                  <Download className="w-3.5 h-3.5 text-[#252522]" />
                   <span>Export CSV</span>
                 </button>
               </div>
 
             </div>
 
-            {/* 7. Polished Data Table View */}
-            <div className="bg-[#FFFFFF] rounded-xl border border-[#E8E5DF] overflow-hidden shadow-2xs">
+            {/* 7. Polished Data Table View matching image screenshot */}
+            <div className="bg-[#FFFFFF] rounded-3xl border border-[#E8E4DC] overflow-hidden shadow-2xs">
               
               {/* Desktop Table View */}
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-[#F7F6F2] border-b border-[#E8E5DF] text-[#77736D] font-sans font-medium">
-                      <th className="py-3 px-4 w-10 text-center">#</th>
-                      <th className="py-3 px-4 min-w-[210px]">Email Address</th>
-                      <th className="py-3 px-4 min-w-[150px]">Status</th>
-                      <th className="py-3 px-4 min-w-[280px]">Reason & Assessment</th>
-                      <th className="py-3 px-4 min-w-[220px]">Checks Performed</th>
-                      <th className="py-3 px-4 w-32 text-right">Actions</th>
+                    <tr className="bg-[#F2EFE8] border-b border-[#E8E4DC] text-[#252522] font-sans font-medium">
+                      <th className="py-3.5 px-5 w-12 text-center">#</th>
+                      <th className="py-3.5 px-5 min-w-[200px]">Email Address</th>
+                      <th className="py-3.5 px-5 min-w-[150px]">Status</th>
+                      <th className="py-3.5 px-5 min-w-[280px]">Reason & Assessment</th>
+                      <th className="py-3.5 px-5 min-w-[240px]">Checks Performed</th>
+                      <th className="py-3.5 px-5 w-32 text-right"></th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E8E5DF]">
+                  <tbody className="divide-y divide-[#E8E4DC]/60">
                     {filteredResults.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="py-12 text-center text-xs font-sans">
                           {searchQuery ? (
                             <div className="space-y-1">
-                              <p className="font-semibold text-[#262522]">No emails found</p>
-                              <p className="text-[#77736D]">Try a different search term.</p>
+                              <p className="font-semibold text-[#252525]">No emails found</p>
+                              <p className="text-[#686868]">Try a different search term.</p>
                             </div>
                           ) : (
                             <div className="space-y-1">
-                              <p className="font-semibold text-[#262522]">No matching results</p>
-                              <p className="text-[#77736D]">Try another filter or clear your search.</p>
+                              <p className="font-semibold text-[#252525]">No matching results</p>
+                              <p className="text-[#686868]">Try another filter or clear your search.</p>
                             </div>
                           )}
                         </td>
                       </tr>
                     ) : (
                       filteredResults.map((item, idx) => (
-                        <tr key={idx} className="hover:bg-[#FAF9F6] transition-colors">
-                          <td className="py-3 px-4 font-mono text-[#77736D] text-center text-xs tabular-nums">{idx + 1}</td>
-                          <td className="py-3 px-4 font-mono font-medium text-[#262522] text-xs break-all select-all">{item.email}</td>
-                          <td className="py-3 px-4">
+                        <tr key={idx} className="hover:bg-[#FAF8F5] transition-colors">
+                          <td className="py-4 px-5 font-mono text-[#686868] text-center text-xs tabular-nums">{idx + 1}</td>
+                          <td className="py-4 px-5 font-mono font-medium text-[#252525] text-xs break-all select-all">{item.email}</td>
+                          <td className="py-4 px-5">
                             {renderStatusBadge(item.status)}
                           </td>
-                          <td className="py-3 px-4 text-[#262522] text-xs leading-relaxed font-sans">{item.reason}</td>
-                          <td className="py-3 px-4">
+                          <td className="py-4 px-5 text-[#252525] text-xs leading-relaxed font-sans">{item.reason}</td>
+                          <td className="py-4 px-5">
                             {renderCheckBadges(item.checks_performed || { syntax_valid: false, domain_exists: false, mx_records_found: false, disposable_domain: false, role_account: false })}
                           </td>
-                          <td className="py-3 px-4 text-right">
+                          <td className="py-4 px-5 text-right">
                             <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
                               <button 
                                 type="button" 
                                 onClick={() => setInspectItem(item)}
-                                className="px-2.5 py-1 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#262522] hover:text-[#B96332] rounded text-xs font-sans font-medium transition-colors inline-flex items-center gap-1 cursor-pointer border border-[#E8E5DF] whitespace-nowrap"
+                                className="px-3.5 py-1.5 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#252522] hover:text-[#C66A32] rounded-full text-xs font-sans font-medium transition-colors inline-flex items-center gap-1.5 cursor-pointer border border-[#E2DDD5] shadow-2xs whitespace-nowrap"
                               >
+                                <FileText className="w-3.5 h-3.5 text-[#686868]" />
                                 <span>View details</span>
-                                <ChevronRight className="w-3.5 h-3.5 text-[#77736D]" />
                               </button>
                               <button 
                                 type="button" 
                                 onClick={() => handleCopy(item.email, idx)}
-                                className="p-1.5 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#77736D] hover:text-[#262522] rounded text-xs transition-colors inline-flex items-center cursor-pointer border border-[#E8E5DF] whitespace-nowrap"
+                                className="p-1.5 bg-[#FFFFFF] hover:bg-[#F8EEE6] text-[#686868] hover:text-[#252522] rounded-full text-xs transition-colors inline-flex items-center cursor-pointer border border-[#E2DDD5] shadow-2xs whitespace-nowrap"
                                 title="Copy email"
                               >
-                                {copiedIndex === idx ? <Check className="w-3.5 h-3.5 text-[#39775B]" /> : <Copy className="w-3.5 h-3.5" />}
+                                {copiedIndex === idx ? <Check className="w-3.5 h-3.5 text-[#2B5C40]" /> : <Copy className="w-3.5 h-3.5" />}
                               </button>
                             </div>
                           </td>

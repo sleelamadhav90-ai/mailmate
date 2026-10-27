@@ -280,29 +280,29 @@ document.addEventListener('DOMContentLoaded', () => {
             let statusBadgeHtml = '';
             if (item.status === 'Likely Deliverable' || item.status === 'Likely Delivered') {
                 statusBadgeHtml = `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#EAF4EE] text-[#39775B] border border-[#39775B]/20 whitespace-nowrap">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#39775B]"></span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-medium bg-[#D4EAD9] text-[#2B5C40] border border-[#B9DCC0] whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#2B5C40]"></span>
                         <span>Likely Deliverable</span>
                     </span>
                 `;
             } else if (item.status === 'Likely to Bounce') {
                 statusBadgeHtml = `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#FBF0EF] text-[#B84C43] border border-[#B84C43]/20 whitespace-nowrap">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#B84C43]"></span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-medium bg-[#FADBD8] text-[#902A24] border border-[#F5B7B1] whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#902A24]"></span>
                         <span>Likely to Bounce</span>
                     </span>
                 `;
             } else if (item.status === 'Invalid Format') {
                 statusBadgeHtml = `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#F7F6F2] text-[#77736D] border border-[#E8E5DF] whitespace-nowrap">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#77736D]"></span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-medium bg-[#EFECE6] text-[#5C5955] border border-[#E2DDD5] whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#5C5955]"></span>
                         <span>Invalid Format</span>
                     </span>
                 `;
             } else {
                 statusBadgeHtml = `
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-sans font-medium bg-[#F8EEE6] text-[#A87530] border border-[#A87530]/20 whitespace-nowrap">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#A87530]"></span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-sans font-medium bg-[#FDEBD0] text-[#7E5109] border border-[#FAD7A0] whitespace-nowrap">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#7E5109]"></span>
                         <span>Unknown</span>
                     </span>
                 `;
