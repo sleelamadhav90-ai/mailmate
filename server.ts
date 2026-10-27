@@ -185,7 +185,7 @@ async function evaluateEmail(emailStr: string) {
   const clean = (emailStr || '').trim();
   const syn = validateSyntax(clean);
 
-  // Syntax Error -> Invalid Format
+  // 1. Syntax Error -> Invalid Format (Skip DNS check)
   if (!syn.ok) {
     return {
       email: clean,
@@ -208,7 +208,7 @@ async function evaluateEmail(emailStr: string) {
   const isRole = ROLE_PREFIXES.has(syn.local.toLowerCase());
   const isDisposable = DISPOSABLE_DOMAINS.has(syn.domain.toLowerCase());
 
-  // Perform DNS Resolution on backend
+  // Perform DNS Resolution
   const dnsRes = await resolveDns(syn.domain);
 
   const checks = {
@@ -225,19 +225,7 @@ async function evaluateEmail(emailStr: string) {
     dns_status: dnsRes.dns_status
   };
 
-  // Case 1: Disposable provider -> Likely to Bounce
-  if (isDisposable) {
-    return {
-      email: clean,
-      domain: syn.domain,
-      status: 'Likely to Bounce',
-      reason: 'Temporary or disposable email provider detected.',
-      checks_performed: checks,
-      mailbox_verified: false
-    };
-  }
-
-  // Case 2: DNS Error, Timeout, or SERVFAIL -> Unknown (Never report as NXDOMAIN or Bounce)
+  // 2. DNS Error, Timeout, or SERVFAIL -> Unknown (Inconclusive results)
   if (dnsRes.dns_error && !dnsRes.dns_error.includes('NXDOMAIN')) {
     let reasonText = 'DNS lookup was inconclusive. Deliverability remains unknown.';
     if (dnsRes.dns_status === 'TIMEOUT') {
@@ -255,7 +243,7 @@ async function evaluateEmail(emailStr: string) {
     };
   }
 
-  // Case 3: Confirmed Null MX (RFC 7505) -> Likely to Bounce
+  // 3. Confirmed Null MX (RFC 7505) -> Likely to Bounce
   if (dnsRes.is_null_mx) {
     return {
       email: clean,
@@ -267,7 +255,7 @@ async function evaluateEmail(emailStr: string) {
     };
   }
 
-  // Case 4: Confirmed Nonexistent Domain (NXDOMAIN) -> Likely to Bounce
+  // 4. Confirmed Nonexistent Domain (NXDOMAIN) -> Likely to Bounce
   if (dnsRes.domain_exists === false) {
     return {
       email: clean,
@@ -279,19 +267,7 @@ async function evaluateEmail(emailStr: string) {
     };
   }
 
-  // Case 5: Domain exists, but NO MX and NO A/AAAA fallback -> Likely to Bounce
-  if (!dnsRes.mx_records_found && !dnsRes.has_fallback_a) {
-    return {
-      email: clean,
-      domain: syn.domain,
-      status: 'Likely to Bounce',
-      reason: 'No MX records found. Additional routing checks are needed before determining deliverability.',
-      checks_performed: checks,
-      mailbox_verified: false
-    };
-  }
-
-  // Case 6: Domain has active MX records -> Likely Deliverable
+  // 5. MX Records Found -> Likely Deliverable
   if (dnsRes.mx_records_found && dnsRes.mx_hosts.length >= 1) {
     return {
       email: clean,
@@ -303,13 +279,25 @@ async function evaluateEmail(emailStr: string) {
     };
   }
 
-  // Case 7: Fallback A/AAAA routing available -> Likely Deliverable
+  // 6. Fallback A/AAAA routing available (RFC 5321) -> Likely Deliverable
   if (dnsRes.has_fallback_a) {
     return {
       email: clean,
       domain: syn.domain,
       status: 'Likely Deliverable',
       reason: 'Domain publishes fallback mail-routing records (RFC 5321). Individual mailbox unconfirmed.',
+      checks_performed: checks,
+      mailbox_verified: false
+    };
+  }
+
+  // 7. Domain exists, but NO MX and NO A/AAAA fallback -> Likely to Bounce
+  if (dnsRes.domain_exists === true && !dnsRes.mx_records_found && !dnsRes.has_fallback_a) {
+    return {
+      email: clean,
+      domain: syn.domain,
+      status: 'Likely to Bounce',
+      reason: 'Domain exists but has no MX records or fallback mail routing (A/AAAA) configured.',
       checks_performed: checks,
       mailbox_verified: false
     };

@@ -172,21 +172,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const delivCount = summary.likely_deliverable ?? summary.likely_delivered ?? 0;
         const bounceCount = summary.likely_to_bounce || 0;
         const unknownCount = summary.unknown || 0;
+        const invalidCount = summary.invalid_format || 0;
+
+        const statTotal = document.getElementById('statTotal');
+        const statDelivered = document.getElementById('statDelivered');
+        const statBounce = document.getElementById('statBounce');
+        const statUnknown = document.getElementById('statUnknown');
+        const statInvalidFormat = document.getElementById('statInvalidFormat');
 
         if (statTotal) statTotal.textContent = total;
         if (statDelivered) statDelivered.textContent = delivCount;
         if (statBounce) statBounce.textContent = bounceCount;
         if (statUnknown) statUnknown.textContent = unknownCount;
+        if (statInvalidFormat) statInvalidFormat.textContent = invalidCount;
 
         const pctTotal = document.getElementById('pctTotal');
         const pctDelivered = document.getElementById('pctDelivered');
         const pctBounce = document.getElementById('pctBounce');
         const pctUnknown = document.getElementById('pctUnknown');
+        const pctInvalidFormat = document.getElementById('pctInvalidFormat');
 
-        if (pctTotal) pctTotal.textContent = total > 0 ? '100%' : '0%';
-        if (pctDelivered) pctDelivered.textContent = total > 0 ? Math.round((delivCount / total) * 100) + '%' : '0%';
-        if (pctBounce) pctBounce.textContent = total > 0 ? Math.round((bounceCount / total) * 100) + '%' : '0%';
-        if (pctUnknown) pctUnknown.textContent = total > 0 ? Math.round((unknownCount / total) * 100) + '%' : '0%';
+        if (pctTotal) pctTotal.textContent = total > 0 ? '— 100%' : '— 0%';
+        if (pctDelivered) pctDelivered.textContent = total > 0 ? `— ${Math.round((delivCount / total) * 100)}%` : '— 0%';
+        if (pctBounce) pctBounce.textContent = total > 0 ? `— ${Math.round((bounceCount / total) * 100)}%` : '— 0%';
+        if (pctUnknown) pctUnknown.textContent = total > 0 ? `— ${Math.round((unknownCount / total) * 100)}%` : '— 0%';
+        if (pctInvalidFormat) pctInvalidFormat.textContent = total > 0 ? `— ${Math.round((invalidCount / total) * 100)}%` : '— 0%';
     }
 
     function setActiveFilter(filterName) {

@@ -197,8 +197,8 @@ def evaluate_email_deliverability(email: str) -> Dict[str, Any]:
         return {
             "email": raw_email,
             "domain": domain_part if domain_part else "N/A",
-            "status": "Likely to Bounce",
-            "reason": syntax_error,
+            "status": "Invalid Format",
+            "reason": "Enter a valid email address containing a local part and domain.",
             "checks_performed": {
                 "syntax_valid": False,
                 "domain_exists": False,
@@ -229,16 +229,6 @@ def evaluate_email_deliverability(email: str) -> Dict[str, Any]:
         "dmarc_record": dns_res["dmarc_record"],
         "dns_status": dns_res["dns_status"]
     }
-    
-    if is_disposable:
-        return {
-            "email": raw_email,
-            "domain": domain_part,
-            "status": "Likely to Bounce",
-            "reason": "Disposable or temporary email service provider detected. Messages sent here expire or drop.",
-            "checks_performed": checks_performed,
-            "mailbox_verified": False
-        }
 
     if dns_res.get("dns_error") and not ("NXDOMAIN" in dns_res["dns_error"]):
         return {
@@ -255,23 +245,42 @@ def evaluate_email_deliverability(email: str) -> Dict[str, Any]:
             "email": raw_email,
             "domain": domain_part,
             "status": "Likely to Bounce",
-            "reason": "Domain has published a Null MX record (RFC 7505) and explicitly rejects all incoming email.",
+            "reason": "This domain explicitly indicates that it does not accept email.",
             "checks_performed": checks_performed,
             "mailbox_verified": False
         }
     
     if dns_res["domain_exists"] is False:
-        reason_msg = dns_res["dns_error"] or "Domain does not exist in DNS (NXDOMAIN)."
         return {
             "email": raw_email,
             "domain": domain_part,
             "status": "Likely to Bounce",
-            "reason": reason_msg,
+            "reason": "No DNS domain found. This address is unlikely to receive email.",
             "checks_performed": checks_performed,
             "mailbox_verified": False
         }
     
-    if not dns_res["mx_records_found"] and not dns_res["has_fallback_a"]:
+    if dns_res["mx_records_found"] and len(dns_res["mx_hosts"]) >= 1:
+        return {
+            "email": raw_email,
+            "domain": domain_part,
+            "status": "Likely Deliverable",
+            "reason": "Mail-routing records found. Individual mailbox existence is unconfirmed.",
+            "checks_performed": checks_performed,
+            "mailbox_verified": False
+        }
+    
+    if dns_res["has_fallback_a"]:
+        return {
+            "email": raw_email,
+            "domain": domain_part,
+            "status": "Likely Deliverable",
+            "reason": "Domain publishes fallback mail-routing records (RFC 5321). Individual mailbox unconfirmed.",
+            "checks_performed": checks_performed,
+            "mailbox_verified": False
+        }
+    
+    if dns_res["domain_exists"] is True and not dns_res["mx_records_found"] and not dns_res["has_fallback_a"]:
         return {
             "email": raw_email,
             "domain": domain_part,
@@ -281,32 +290,11 @@ def evaluate_email_deliverability(email: str) -> Dict[str, Any]:
             "mailbox_verified": False
         }
     
-    if dns_res["mx_records_found"] and len(dns_res["mx_hosts"]) >= 1:
-        reason_text = f"Valid syntax and domain active with {len(dns_res['mx_hosts'])} MX record(s). Mailbox presence estimated from infrastructure."
-        return {
-            "email": raw_email,
-            "domain": domain_part,
-            "status": "Likely Delivered",
-            "reason": reason_text,
-            "checks_performed": checks_performed,
-            "mailbox_verified": False
-        }
-    
-    if dns_res["has_fallback_a"]:
-        return {
-            "email": raw_email,
-            "domain": domain_part,
-            "status": "Likely Delivered",
-            "reason": "Domain has no explicit MX records, but publishes active web/mail fallback host records (RFC 5321).",
-            "checks_performed": checks_performed,
-            "mailbox_verified": False
-        }
-    
     return {
         "email": raw_email,
         "domain": domain_part,
         "status": "Unknown",
-        "reason": "Domain records are ambiguous; mailbox existence cannot be confirmed without sending mail.",
+        "reason": "DNS lookup was inconclusive. Deliverability remains unknown.",
         "checks_performed": checks_performed,
         "mailbox_verified": False
     }

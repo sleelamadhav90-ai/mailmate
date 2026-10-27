@@ -452,7 +452,7 @@ export default function App() {
           <section className="space-y-8 font-sans">
             
             {/* 5. Metric Cards Grid matching attached reference layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-sans">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 font-sans">
               
               {/* Total Processed */}
               <div 
@@ -469,10 +469,10 @@ export default function App() {
                     <Layers className="w-3.5 h-3.5" />
                   </div>
                 </div>
-                <div className="flex items-baseline justify-between mt-1">
+                <div className="flex items-baseline gap-2 mt-1">
                   <span className="text-2xl font-mono tabular-nums font-bold text-[#1E1B4B]">{summary.total}</span>
-                  <span className="text-xs font-semibold text-[#635BFF]">
-                    {summary.total ? '100%' : '0%'}
+                  <span className="text-sm font-sans font-medium text-[#635BFF] opacity-80">
+                    — {summary.total > 0 ? '100%' : '0%'}
                   </span>
                 </div>
                 <div className="text-[11px] font-medium text-[#635BFF]/80 flex items-center gap-1 pt-1">
@@ -496,10 +496,10 @@ export default function App() {
                     <CheckCircle2 className="w-3.5 h-3.5" />
                   </div>
                 </div>
-                <div className="flex items-baseline justify-between mt-1">
+                <div className="flex items-baseline gap-2 mt-1">
                   <span className="text-2xl font-mono tabular-nums font-bold text-[#1E563B]">{summary.likely_deliverable}</span>
-                  <span className="text-xs font-semibold text-[#39775B]">
-                    {summary.total ? `${Math.round((summary.likely_deliverable / summary.total) * 100)}%` : '0%'}
+                  <span className="text-sm font-sans font-medium text-[#39775B] opacity-80">
+                    — {summary.total ? `${Math.round((summary.likely_deliverable / summary.total) * 100)}%` : '0%'}
                   </span>
                 </div>
                 <div className="text-[11px] font-medium text-[#39775B]/80 flex items-center gap-1 pt-1">
@@ -523,10 +523,10 @@ export default function App() {
                     <XCircle className="w-3.5 h-3.5" />
                   </div>
                 </div>
-                <div className="flex items-baseline justify-between mt-1">
+                <div className="flex items-baseline gap-2 mt-1">
                   <span className="text-2xl font-mono tabular-nums font-bold text-[#9B322A]">{summary.likely_to_bounce}</span>
-                  <span className="text-xs font-semibold text-[#B84C43]">
-                    {summary.total ? `${Math.round((summary.likely_to_bounce / summary.total) * 100)}%` : '0%'}
+                  <span className="text-sm font-sans font-medium text-[#B84C43] opacity-80">
+                    — {summary.total ? `${Math.round((summary.likely_to_bounce / summary.total) * 100)}%` : '0%'}
                   </span>
                 </div>
                 <div className="text-[11px] font-medium text-[#B84C43]/80 flex items-center gap-1 pt-1">
@@ -550,15 +550,42 @@ export default function App() {
                     <HelpCircle className="w-3.5 h-3.5" />
                   </div>
                 </div>
-                <div className="flex items-baseline justify-between mt-1">
+                <div className="flex items-baseline gap-2 mt-1">
                   <span className="text-2xl font-mono tabular-nums font-bold text-[#855B21]">{summary.unknown}</span>
-                  <span className="text-xs font-semibold text-[#A87530]">
-                    {summary.total ? `${Math.round((summary.unknown / summary.total) * 100)}%` : '0%'}
+                  <span className="text-sm font-sans font-medium text-[#A87530] opacity-80">
+                    — {summary.total ? `${Math.round((summary.unknown / summary.total) * 100)}%` : '0%'}
                   </span>
                 </div>
                 <div className="text-[11px] font-medium text-[#A87530]/80 flex items-center gap-1 pt-1">
                   <Filter className="w-3 h-3 text-[#A87530]" />
                   <span>{activeTab === 'Unknown' ? 'Active filter (click to reset)' : 'Click to filter'}</span>
+                </div>
+              </div>
+
+              {/* Invalid Format */}
+              <div 
+                onClick={() => setActiveTab(activeTab === 'Invalid Format' ? 'all' : 'Invalid Format')}
+                className={`rounded-2xl p-5 cursor-pointer transition-all flex flex-col justify-between h-32 relative border ${
+                  activeTab === 'Invalid Format' 
+                    ? 'bg-[#EFECE6] border-[#787167] ring-2 ring-[#787167]/20 shadow-xs' 
+                    : 'bg-[#EFECE6]/70 border-[#E2DDD5] hover:border-[#787167]/60 hover:bg-[#EFECE6]'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs sm:text-sm font-semibold text-[#4A4742]">Invalid Format</span>
+                  <div className="w-7 h-7 rounded-full bg-[#E2DDD5] flex items-center justify-center text-[#5C5955]">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <span className="text-2xl font-mono tabular-nums font-bold text-[#4A4742]">{summary.invalid_format}</span>
+                  <span className="text-sm font-sans font-medium text-[#5C5955] opacity-80">
+                    — {summary.total ? `${Math.round((summary.invalid_format / summary.total) * 100)}%` : '0%'}
+                  </span>
+                </div>
+                <div className="text-[11px] font-medium text-[#5C5955]/80 flex items-center gap-1 pt-1">
+                  <Filter className="w-3 h-3 text-[#5C5955]" />
+                  <span>{activeTab === 'Invalid Format' ? 'Active filter (click to reset)' : 'Click to filter'}</span>
                 </div>
               </div>
 
@@ -626,19 +653,17 @@ export default function App() {
                   >
                     Unknown
                   </button>
-                  {summary.invalid_format > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('Invalid Format')}
-                      className={`px-3.5 py-1.5 text-xs font-sans rounded-full transition-all whitespace-nowrap cursor-pointer ${
-                        activeTab === 'Invalid Format' 
-                          ? 'bg-[#FFFFFF] text-[#5C5955] shadow-xs font-semibold' 
-                          : 'text-[#5C5955] hover:text-[#252525] font-medium'
-                      }`}
-                    >
-                      Invalid Format
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('Invalid Format')}
+                    className={`px-3.5 py-1.5 text-xs font-sans rounded-full transition-all whitespace-nowrap cursor-pointer ${
+                      activeTab === 'Invalid Format' 
+                        ? 'bg-[#FFFFFF] text-[#5C5955] shadow-xs font-semibold' 
+                        : 'text-[#5C5955] hover:text-[#252525] font-medium'
+                    }`}
+                  >
+                    Invalid Format
+                  </button>
                 </div>
 
                 <button 
