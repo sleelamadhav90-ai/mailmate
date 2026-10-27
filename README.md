@@ -1,322 +1,107 @@
-# MailSure — Email Deliverability Checker
+# MailMate — Email Deliverability Checker
 
-**ShieldNex Aerospace — Software Development Internship Selection Task**
+**Check first. Send smarter.**
 
-MailSure is a professional, high-performance email deliverability and syntax verification system built for **ShieldNex Aerospace**. It enables users to perform batch inspections on email addresses, evaluating syntax compliance, domain existence, DNS Mail Exchanger (MX) record availability, disposable provider detection, and security authentication records (SPF & DMARC).
-
----
-
-## 1. Project Overview & Problem Statement
-
-### Problem Statement
-In aerospace engineering, defense logistics, and corporate operations, automated communication systems face deliverability failures when handling unverified email lists. Invalid email addresses increase bounce rates, damage domain sender reputation, and cause mission-critical alerts to fail.
-
-However, **traditional email verification tools often mislead users** by labeling an address "100% Verified" simply because its domain has an MX record. In reality, a domain's MX record only proves that a mail server is configured to accept mail for that domain—it **does not prove that an individual mailbox exists**.
-
-### Objective & Core Principles
-MailSure solves this problem by providing **honest, evidence-based deliverability classification**:
-- **Likely Delivered**: Only assigned when strong positive infrastructure evidence exists (valid RFC syntax, active DNS domain, verified MX records, and published SPF/DMARC records) without any bounce indicators.
-- **Likely to Bounce**: Assigned when reliable checks indicate a definitive delivery failure (invalid syntax, nonexistent domain, Null MX records, disposable email domains, or lack of mail routing records).
-- **Unknown**: Assigned when deliverability or mailbox existence cannot be established with certainty (DNS timeouts, network ambiguity, server errors, or standard domains where mailbox-level verification is unavailable without sending an email).
-
-> **Core Guarantee:** MailSure never sends spam or test emails, never conducts invasive SMTP `RCPT TO` probing against third-party servers, and never falsely claims that a mailbox is guaranteed to exist without absolute evidence.
+MailMate is a professional, high-performance email deliverability and syntax verification system created for the ShieldNex Aerospace Software Development selection task.
 
 ---
 
-## 2. Key Features
+## 1. Verification Checks Performed
 
-- **Batch Processing**: Input multiple email addresses separated by newlines, commas, or semicolons (up to 100 emails per batch).
-- **RFC 5322 Syntax Inspection**: Checks local part length (<= 64 chars), domain length (<= 255 chars), total length (<= 254 chars), consecutive dots, TLD validity, and disallowed characters.
-- **DNS & MX Record Lookup**: Queries authoritative DNS servers for MX records with priority sorting. Supports RFC 5.1 fallback to A/AAAA records for domains without explicit MX records.
-- **RFC 7505 Null MX Detection**: Identifies domains that explicitly decline incoming email (`0 .`).
-- **Disposable Domain Blacklist Filter**: Automatically flags temporary email providers (e.g., Mailinator, TempMail, TrashMail) that drop incoming mail.
-- **Role Account Flagging**: Identifies functional addresses (e.g., `admin@`, `support@`, `info@`, `billing@`).
-- **SPF & DMARC Authentication Checks**: Queries DNS `TXT` records for `v=spf1` and `_dmarc` to assess domain mail security maturity.
-- **Aerospace & Cybersecurity UI**: High-contrast, responsive interface inspired by aerospace telemetry systems, featuring deep navy palette, real-time batch counter, filterable results table, summary KPI cards, and CSV report export.
-- **RESTful API & Health Check**: Includes `/api/check` POST endpoint and `/health` monitoring endpoint.
-- **Automated Unit & Integration Test Suite**: Mocked DNS test suite ensuring 100% test independence from live network environments.
+MailMate executes a sequential 7-layer verification pipeline for every submitted email address:
 
----
-
-## 3. Technology Stack
-
-- **Backend Framework**: Python 3.10+ with Flask (WSGI)
-- **DNS Resolver Engine**: `dnspython` (with standard library `socket` fallback)
-- **Production Application Server**: Gunicorn
-- **Frontend Interface**: HTML5, CSS3 (Tailwind CSS styling), Vanilla JavaScript (ES6+)
-- **Icons & Typography**: Lucide Icons, Plus Jakarta Sans, JetBrains Mono
-- **Testing Framework**: Python `unittest` & `pytest` with `unittest.mock`
+1. **RFC 5322 Syntax Validation**: Validates address structure, local part (≤64 chars), domain length (≤255 chars), total length (≤254 chars), single `@` delimiter, dot placement, disallowed characters, and valid top-level domain (TLD). Malformed addresses are flagged with clear, explicit syntax error reasons.
+2. **Disposable Email Filter**: Compares domain against an updated blacklist of temporary email services (Mailinator, TempMail, YopMail, 10MinuteMail, TrashMail, Dispostable, etc.) whose addresses expire or drop incoming mail.
+3. **Role Account Detection**: Flags functional or team addresses (e.g., `admin@`, `support@`, `info@`, `billing@`, `jobs@`) that may not belong to a single human user.
+4. **DNS Domain Resolution (A / AAAA)**: Resolves the domain name in authoritative DNS servers with strict timeout handling (3.0s) to determine if the domain actually exists on the internet (`NXDOMAIN` check).
+5. **RFC 7505 Null MX Detection**: Checks if the domain explicitly publishes a Null MX record (`0 .`), indicating the domain owners explicitly refuse all incoming email.
+6. **MX Record Lookup & Priority Sorting**: Queries authoritative DNS servers for Mail Exchanger (`MX`) records and sorts host records by preference priority. If no explicit MX record is found, performs RFC 5321 fallback resolution to root `A`/`AAAA` host records.
+7. **SPF & DMARC Security Authentication Inspection**: Queries domain TXT records for `v=spf1` (Sender Policy Framework) and `_dmarc` (Domain-based Message Authentication, Reporting, and Conformance) to evaluate sender authentication maturity.
 
 ---
 
-## 4. How Classification Logic Works
+## 2. Classification Meanings & Limitations
 
-MailSure executes a sequential, multi-stage evaluation pipeline for every submitted address:
-
-```
-[ Input Email ]
-       │
-       ▼
- [ 1. RFC 5322 Syntax Check ] ── (Invalid Syntax) ──────────────► [ Likely to Bounce ]
-       │ (Valid)
-       ▼
- [ 2. Disposable Domain Check ] ── (Matches Blacklist) ─────────► [ Likely to Bounce ]
-       │ (Clean)
-       ▼
- [ 3. DNS Domain & MX Lookup ] ── (NXDOMAIN / Null MX / No Routing) ─► [ Likely to Bounce ]
-       │
-       ├── (DNS Timeout / Server Failure) ─────────────────────► [ Unknown ]
-       │
-       ▼ (MX Records Active)
- [ 4. Infrastructure & Security Check (SPF / DMARC) ]
-       │
-       ├── (MX Verified + SPF/DMARC Active) ───────────────────► [ Likely Delivered ]
-       └── (Insufficient Evidence) ─────────────────────────────► [ Unknown ]
-```
-
-### Classification Status Definitions
-
-| Status | Badge | Criteria & Rationale |
-| :--- | :--- | :--- |
-| **Likely Delivered** | `● Likely Delivered` | Valid RFC syntax + domain resolves + active MX records verified + published SPF/DMARC records + no bounce indicators. *(Note: Mailbox presence is estimated from domain infrastructure).* |
-| **Likely to Bounce** | `✖ Likely to Bounce` | Invalid email format, domain does not exist (`NXDOMAIN`), domain published Null MX (`0 .`), domain lacks MX & A/AAAA mail routing records, or disposable email service detected. |
-| **Unknown** | `▲ Unknown` | DNS lookup timed out, temporary network failure occurred, or domain has valid MX records but mailbox existence cannot be confirmed without sending an actual email. |
+| Classification | Meaning & Criteria | Limitations & Disclaimers |
+|---|---|---|
+| **Likely Delivered** | Assigned when an email passes RFC 5322 syntax validation, belongs to an active domain, and resolves active MX (or RFC 5321 fallback A/AAAA) routing records without any bounce indicators (such as Null MX or disposable provider flags). | **Does NOT guarantee final delivery or mailbox existence.** Active domain mail infrastructure proves the domain can route email, but individual mailbox existence, mailbox quotas, anti-spam filters, and user account status cannot be verified without sending an email. |
+| **Likely to Bounce** | Assigned when reliable positive evidence demonstrates that the email will fail: invalid syntax, confirmed non-existent domain (`NXDOMAIN`), confirmed Null MX record (`0 .`), disposable email service provider, or absence of both MX and fallback A/AAAA records. | Synthetic or mock test emails sent to real domains without mail routing will bounce. Syntax errors are explicitly separated from domain routing errors. |
+| **Unknown** | Assigned whenever available evidence is inconclusive, including DNS query timeouts, `SERVFAIL`/`REFUSED` DNS responses, network socket blocks, rate-limiting by DNS resolvers, or unexpected exceptions. | Protects users from making false assumptions. Generic DNS glitches, timeouts, or network blocks are **never** converted into `NXDOMAIN` or "Likely to Bounce". |
 
 ---
 
-## 5. Limitations of Email Verification
+## 3. Deployment Environment & Connectivity
 
-It is technically impossible to guarantee 100% mailbox presence without sending a real email. Understanding these technical limitations is essential:
+MailMate runs as a full-stack Node.js/Express application with Vite in containerized cloud environments, and includes a parallel Python/Flask service option.
 
-1. **MX Records Do Not Prove Mailbox Existence**: An MX record indicates that a server is listening for emails addressed to that domain. It does not disclose whether a specific username (e.g. `john.doe@domain.com`) exists on that server.
-2. **Catch-All Mail Servers**: Many corporate domains configure "Catch-All" rules where the mail server accepts messages for *any* address under the domain, even non-existent ones, discarding invalid ones internally after receipt.
-3. **SMTP Probing Restrictions**: In the past, tools attempted SMTP `RCPT TO` commands to probe mailboxes. Today, major providers (Google Workspace, Microsoft 365, Proofpoint, Mimecast) block, rate-limit, or fake `250 OK` responses to prevent dictionary attacks. MailSure intentionally avoids SMTP probing to prevent IP blacklisting and maintain ethical compliance.
-4. **Disposable Service Evolution**: Temporary email services constantly generate new domain names. MailSure updates its disposable list regularly, but newly registered temporary domains may initially return `Unknown`.
-
----
-
-## 6. Local Setup Instructions (Windows)
-
-Follow these step-by-step instructions to run MailSure locally on Windows.
-
-### Prerequisites
-- Windows 10 / 11
-- Python 3.10 or higher ([Download Python](https://www.python.org/downloads/))
-- Git ([Download Git](https://git-scm.com/))
-
-### Step 1: Open Terminal / Command Prompt
-Press `Win + R`, type `cmd` (or open PowerShell), and navigate to your working directory:
-```cmd
-cd C:\Projects
-```
-
-### Step 2: Clone Repository (or create folder)
-```cmd
-git clone https://github.com/your-username/mailsure.git
-cd mailsure
-```
-
-### Step 3: Create and Activate Virtual Environment
-```cmd
-python -m venv venv
-venv\Scripts\activate
-```
-*(You should see `(venv)` prefix in your terminal prompt).*
-
-### Step 4: Install Dependencies
-```cmd
-pip install -r requirements.txt
-```
-
-### Step 5: Run the Flask Application
-```cmd
-python app.py
-```
-
-Output:
-```
- * Serving Flask app 'app'
- * Debug mode: off
- * Running on http://127.0.0.1:5000
-```
-
-Open your browser and navigate to **`http://127.0.0.1:5000`**.
+- **DNS Connectivity (Port 53 / UDP)**: The container runtime permits outbound DNS queries over port 53 UDP. MailMate uses asynchronous non-blocking DNS resolution (`dns/promises` in Node.js, `dnspython` in Python) with a 3.0-second abort-controller timeout.
+- **Outbound SMTP Connectivity (Port 25 / TCP)**: Cloud container platforms (including Google Cloud Run, AWS EC2, and Heroku) routinely block or throttle outbound TCP port 25 to prevent spam abuse. In addition, major mail receivers (Google Workspace, Microsoft 365, Fastmail) block or rate-limit unauthenticated IP addresses attempting direct port 25 socket connections.
+- **Network Resilience**: MailMate is built to handle environment restrictions gracefully. If DNS resolution encounters network blocks or transient resolver failures, the application reports `Unknown` with exact error details rather than failing silently or fabricating false deliverability claims.
 
 ---
 
-## 7. Running Tests
+## 4. Working vs. Unavailable Checks
 
-MailSure includes comprehensive unit tests with mocked DNS lookups. To run the test suite:
+### Fully Operational Checks
+- ✅ **RFC 5322 Syntax Inspection** (100% reliable local/client & server-side validation)
+- ✅ **Disposable Email Blacklist Detection**
+- ✅ **Role Address Identification**
+- ✅ **Authoritative DNS Resolution & Timeout Abort**
+- ✅ **RFC 7505 Null MX Detection**
+- ✅ **MX Record Query & Priority Sorting**
+- ✅ **RFC 5321 Fallback A/AAAA Host Lookup**
+- ✅ **SPF (`v=spf1`) & DMARC (`_dmarc`) Authentication Records Query**
 
-### Using Python Standard Unittest:
-```cmd
-python test_app.py
-```
-
-### Using Pytest:
-```cmd
-pytest -v test_app.py
-```
-
-Expected Output:
-```
-test_api_response_structure (test_app.TestMailSureBackend) ... ok
-test_disposable_email_detection (test_app.TestMailSureBackend) ... ok
-test_dns_timeout_mock (test_app.TestMailSureBackend) ... ok
-test_empty_submission (test_app.TestMailSureBackend) ... ok
-test_health_endpoint (test_app.TestMailSureBackend) ... ok
-test_mx_record_mock_success (test_app.TestMailSureBackend) ... ok
-test_nonexistent_domain_mock (test_app.TestMailSureBackend) ... ok
-test_oversized_submission (test_app.TestMailSureBackend) ... ok
-test_syntax_validation (test_app.TestMailSureBackend) ... ok
-
-----------------------------------------------------------------------
-Ran 9 tests in 0.124s
-
-OK
-```
+### Intentionally Omitted / Unavailable Checks
+- ❌ **SMTP `RCPT TO` Socket Probing**: Direct SMTP mailbox handshake is omitted because cloud environments block port 25, and major mail providers block, rate-limit, or fake `250 OK` responses for unauthenticated IPs.
+- ❌ **Actual Email Delivery Attempt**: MailMate never sends test emails or messages to addresses the user does not own.
 
 ---
 
-## 8. API Documentation
+## 5. Why Mailbox Existence Cannot Be Confirmed Without Sending Email
 
-### 1. Health Check Endpoint
-- **URL**: `/health`
-- **Method**: `GET`
-- **Response Example**:
-```json
-{
-  "has_dnspython": true,
-  "service": "MailSure Deliverability Checker",
-  "status": "healthy",
-  "timestamp": 1740000000.0
-}
-```
+Many legacy verification tools claim to offer "100% Guaranteed Mailbox Existence" using SMTP `RCPT TO` socket probing without sending an email. In modern email infrastructure, **this claim is technically impossible and inaccurate** due to four industry-standard defensive measures:
 
-### 2. Batch Email Check Endpoint
-- **URL**: `/api/check`
-- **Method**: `POST`
-- **Header**: `Content-Type: application/json`
-- **Request Body**:
-```json
-{
-  "emails": [
-    "pilot@shieldnex.com",
-    "invalid..email@domain.com",
-    "spammer@mailinator.com",
-    "test@non-existent-domain-99.org"
-  ]
-}
-```
+1. **Catch-All Mail Server Configurations**: Millions of domain mail servers are configured as "Catch-All". They accept any local part (`anything@domain.com`) during the initial SMTP handshake (`250 OK`), but quietly discard non-existent mailboxes later or send a non-delivery report (NDR).
+2. **Anti-Harvesting & False `250 OK` Responses**: Major mail providers (such as Microsoft Exchange Online, Gmail, and Yahoo) detect automated SMTP probing and intentionally return `250 OK` for every query to prevent spammers from harvesting active employee directory usernames.
+3. **Graylisting & Rate Limiting**: Security gateways (Proofpoint, Mimecast, Barracuda) defer unknown connections with transient `451` errors ("Graylisting") or temporarily block IPs attempting unauthenticated socket connections.
+4. **Outbound Port 25 Cloud Blocks & IP Reputation**: Modern cloud platforms strictly block outbound TCP port 25. Attempting unauthenticated socket probes from dynamic cloud IPs leads to immediate IP blacklisting (DNSBL).
 
-- **Response Body**:
-```json
-{
-  "total": 4,
-  "summary": {
-    "total": 4,
-    "likely_delivered": 1,
-    "likely_to_bounce": 3,
-    "unknown": 0
-  },
-  "results": [
-    {
-      "email": "pilot@shieldnex.com",
-      "domain": "shieldnex.com",
-      "status": "Likely Delivered",
-      "reason": "Valid syntax, domain active with 2 MX record(s) and SPF authentication. Mailbox existence estimated from domain infrastructure.",
-      "checks_performed": {
-        "syntax_valid": true,
-        "domain_exists": true,
-        "mx_records_found": true,
-        "mx_hosts": ["mail1.shieldnex.com", "mail2.shieldnex.com"],
-        "has_fallback_a": true,
-        "is_null_mx": false,
-        "disposable_domain": false,
-        "role_account": false,
-        "spf_record": true,
-        "dmarc_record": true
-      },
-      "mailbox_verified": false
-    },
-    {
-      "email": "invalid..email@domain.com",
-      "domain": "domain.com",
-      "status": "Likely to Bounce",
-      "reason": "Email contains invalid consecutive dots ('..').",
-      "checks_performed": {
-        "syntax_valid": false,
-        "domain_exists": false,
-        "mx_records_found": false,
-        "disposable_domain": false,
-        "role_account": false
-      },
-      "mailbox_verified": false
-    }
-  ],
-  "disclaimer": "Results are heuristic estimates based on RFC syntax, domain DNS, and MX records. Mailbox-level presence is not guaranteed without sending an email."
-}
-```
+> **Conclusion**: Real-world mail infrastructure can only be accurately evaluated by assessing syntax correctness, domain existence, active mail routing records (MX/A), and security policy records (SPF/DMARC). MailMate delivers honest, transparent results based on these verifiable factors without making false promises.
 
 ---
 
-## 9. GitHub Upload & Cloud Deployment Instructions
+## 6. Project Architecture & Setup
 
-### Step 1: Push Project to GitHub
-```cmd
-git init
-git add .
-git commit -m "Initial commit: MailSure Email Deliverability Checker"
-git branch -M main
-git remote add origin https://github.com/your-username/mailsure.git
-git push -u origin main
+### Local Development
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Start full-stack development server (Express + React Vite on Port 3000)
+npm run dev
+
+# 3. Run automated backend test suite
+npx tsx test_backend.ts
 ```
 
-### Step 2: Deploy to Render (Free Cloud Hosting)
-1. Sign up for a free account at [render.com](https://render.com).
-2. Click **New +** -> **Web Service**.
-3. Connect your GitHub repository `mailsure`.
-4. Configure service settings:
-   - **Name**: `mailsure-checker`
-   - **Environment**: `Python 3`
-   - **Region**: Oregon (US West) or Frankfurt (EU)
-   - **Branch**: `main`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `gunicorn app:app`
-5. Click **Create Web Service**.
-6. Once deployed, Render will provide your public URL (e.g. `https://mailsure-checker.onrender.com`).
-
-### Hosting & Network Considerations
-- **Cold Starts**: Render free instances sleep after 15 minutes of inactivity. The first request after sleep may take 30-50 seconds to warm up.
-- **Outbound DNS (Port 53)**: Free hosting environments permit standard DNS UDP/TCP port 53 queries. If DNS queries fail in certain cloud environments, `app.py` falls back gracefully to standard library `socket.getaddrinfo`.
-
----
-
-## 10. Privacy & Security
-
-- **Data Retention**: MailSure does not store, log, or database submitted email addresses. All evaluations occur purely in memory.
-- **XSS Mitigation**: All email addresses rendered in the browser UI are sanitized with HTML entity escaping (`escapeHtml()`) to prevent Script Injection attacks.
-- **Input Limits**: The API enforces a strict `100` email limit per request to prevent Denial of Service (DoS) and DNS amplification abuse.
-
----
-
-## 11. Project Directory Structure
-
-```
-mailsure/
-├── app.py              # Main Flask Backend API & Verification Logic
-├── requirements.txt    # Production Python Dependencies
-├── Procfile            # Deployment Gunicorn Command
-├── README.md           # Documentation & Internship Report
-├── test_app.py         # Pytest / Unittest Suite (Mocked DNS)
-├── .gitignore          # Git Exclusion Patterns
-├── templates/
-│   └── index.html      # Responsive Aerospace UI Layout
-└── static/
-    ├── style.css       # Tailwind & Aerospace Theme Styling
-    └── script.js       # Client-side Batch Input, Filters & CSV Exporter
+### Python Flask Alternative
+```bash
+# Run Flask app with dnspython
+python3 app.py
 ```
 
----
-
-*Built with precision for ShieldNex Aerospace Software Internship Selection Task.*
+### Project Structure
+```
+├── server.ts              # Full-stack Node.js Express server with Async DNS Engine
+├── app.py                 # Alternative Python Flask application server
+├── src/
+│   ├── App.tsx            # Main React 19 SPA interface with Classic Ivory/Burnt Orange design
+│   ├── main.tsx           # React DOM entry point
+│   └── index.css          # Global CSS with Tailwind styling rules
+├── static/                # Static assets for Flask alternative (style.css, script.js)
+├── templates/             # Jinja2 HTML templates for Flask alternative
+├── test_backend.ts        # Backend verification test suite (9 test cases)
+├── metadata.json          # Applet metadata (MailMate)
+└── README.md              # Project documentation
+```

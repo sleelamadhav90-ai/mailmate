@@ -30,31 +30,31 @@ const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-
 
 function validateSyntax(email: string) {
   if (!email || typeof email !== 'string') {
-    return { ok: false, local: '', domain: '', error: 'Empty or non-string email address.' };
+    return { ok: false, local: '', domain: '', error: 'Invalid Email Syntax: Empty or non-string email address.' };
   }
   const clean = email.trim();
   if (clean.length > 254) {
-    return { ok: false, local: '', domain: '', error: 'Email address exceeds maximum length of 254 characters.' };
+    return { ok: false, local: '', domain: '', error: 'Invalid Email Syntax: Email address exceeds maximum length of 254 characters.' };
   }
   const parts = clean.split('@');
   if (parts.length !== 2) {
-    return { ok: false, local: '', domain: '', error: 'Email address must contain exactly one "@" symbol.' };
+    return { ok: false, local: '', domain: '', error: 'Invalid Email Syntax: Address must contain exactly one "@" symbol.' };
   }
   const local = parts[0];
   const domain = parts[1].toLowerCase();
-  if (!local) return { ok: false, local: '', domain, error: 'Missing local part before "@".' };
-  if (local.length > 64) return { ok: false, local, domain, error: 'Local part exceeds maximum length of 64 characters.' };
-  if (!domain) return { ok: false, local, domain: '', error: 'Missing domain part after "@".' };
-  if (domain.length > 255) return { ok: false, local, domain, error: 'Domain name exceeds maximum length of 255 characters.' };
+  if (!local) return { ok: false, local: '', domain, error: 'Invalid Email Syntax: Missing local part before "@".' };
+  if (local.length > 64) return { ok: false, local, domain, error: 'Invalid Email Syntax: Local part exceeds maximum length of 64 characters.' };
+  if (!domain) return { ok: false, local, domain: '', error: 'Invalid Email Syntax: Missing domain part after "@".' };
+  if (domain.length > 255) return { ok: false, local, domain, error: 'Invalid Email Syntax: Domain name exceeds maximum length of 255 characters.' };
   if (domain.includes('..') || local.includes('..')) {
-    return { ok: false, local, domain, error: 'Email contains invalid consecutive dots ("..").' };
+    return { ok: false, local, domain, error: 'Invalid Email Syntax: Email contains invalid consecutive dots ("..").' };
   }
   if (!EMAIL_REGEX.test(clean)) {
-    return { ok: false, local, domain, error: 'Email syntax does not match standard RFC 5322 format.' };
+    return { ok: false, local, domain, error: 'Invalid Email Syntax: Address does not match standard RFC 5322 syntax format.' };
   }
   const labels = domain.split('.');
   if (labels.length < 2 || labels[labels.length - 1].length < 2) {
-    return { ok: false, local, domain, error: 'Domain must have a valid top-level domain (TLD).' };
+    return { ok: false, local, domain, error: 'Invalid Email Syntax: Domain must contain a valid top-level domain (TLD).' };
   }
   return { ok: true, local, domain, error: '' };
 }
@@ -185,13 +185,13 @@ async function evaluateEmail(emailStr: string) {
   const clean = (emailStr || '').trim();
   const syn = validateSyntax(clean);
 
-  // Syntax Error -> DNS Skipped
+  // Syntax Error -> Invalid Format
   if (!syn.ok) {
     return {
       email: clean,
       domain: syn.domain || 'N/A',
-      status: 'Likely to Bounce',
-      reason: syn.error,
+      status: 'Invalid Format',
+      reason: 'Enter a valid email address containing a local part and domain.',
       checks_performed: {
         syntax_valid: false,
         domain_exists: false,
@@ -231,7 +231,7 @@ async function evaluateEmail(emailStr: string) {
       email: clean,
       domain: syn.domain,
       status: 'Likely to Bounce',
-      reason: 'Disposable or temporary email service provider detected. Messages sent here expire or drop.',
+      reason: 'Temporary or disposable email provider detected.',
       checks_performed: checks,
       mailbox_verified: false
     };
@@ -239,11 +239,17 @@ async function evaluateEmail(emailStr: string) {
 
   // Case 2: DNS Error, Timeout, or SERVFAIL -> Unknown (Never report as NXDOMAIN or Bounce)
   if (dnsRes.dns_error && !dnsRes.dns_error.includes('NXDOMAIN')) {
+    let reasonText = 'DNS lookup was inconclusive; mailbox existence cannot be confirmed.';
+    if (dnsRes.dns_status === 'TIMEOUT') {
+      reasonText = 'The DNS lookup timed out. Deliverability could not be determined.';
+    } else if (dnsRes.dns_status === 'DNS_SERVER_ERROR') {
+      reasonText = "The domain's DNS server returned an error (SERVFAIL).";
+    }
     return {
       email: clean,
       domain: syn.domain,
       status: 'Unknown',
-      reason: `DNS check inconclusive: ${dnsRes.dns_error}`,
+      reason: reasonText,
       checks_performed: checks,
       mailbox_verified: false
     };
@@ -255,7 +261,7 @@ async function evaluateEmail(emailStr: string) {
       email: clean,
       domain: syn.domain,
       status: 'Likely to Bounce',
-      reason: 'Domain has published a Null MX record (RFC 7505) and explicitly rejects all incoming email.',
+      reason: 'This domain explicitly indicates that it does not accept email.',
       checks_performed: checks,
       mailbox_verified: false
     };
@@ -267,7 +273,7 @@ async function evaluateEmail(emailStr: string) {
       email: clean,
       domain: syn.domain,
       status: 'Likely to Bounce',
-      reason: dnsRes.dns_error || 'Domain does not exist in DNS (NXDOMAIN).',
+      reason: 'The email domain does not exist in DNS.',
       checks_performed: checks,
       mailbox_verified: false
     };
@@ -279,31 +285,31 @@ async function evaluateEmail(emailStr: string) {
       email: clean,
       domain: syn.domain,
       status: 'Likely to Bounce',
-      reason: 'Domain exists but has no MX records or fallback A/AAAA mail routing records configured.',
+      reason: 'Domain exists but has no mail-routing or server host records.',
       checks_performed: checks,
       mailbox_verified: false
     };
   }
 
-  // Case 6: Domain has active MX records -> Likely Delivered
+  // Case 6: Domain has active MX records -> Likely Deliverable
   if (dnsRes.mx_records_found && dnsRes.mx_hosts.length >= 1) {
     return {
       email: clean,
       domain: syn.domain,
-      status: 'Likely Delivered',
-      reason: `Valid syntax and domain active with ${dnsRes.mx_hosts.length} MX record(s). Mailbox presence estimated from infrastructure (not guaranteed without sending mail).`,
+      status: 'Likely Deliverable',
+      reason: 'Mail-routing records found. Individual mailbox existence is unconfirmed.',
       checks_performed: checks,
       mailbox_verified: false
     };
   }
 
-  // Case 7: Fallback A/AAAA routing available -> Likely Delivered
+  // Case 7: Fallback A/AAAA routing available -> Likely Deliverable
   if (dnsRes.has_fallback_a) {
     return {
       email: clean,
       domain: syn.domain,
-      status: 'Likely Delivered',
-      reason: 'Domain has no explicit MX records, but publishes active web/mail fallback host records (RFC 5321). Mailbox presence not guaranteed.',
+      status: 'Likely Deliverable',
+      reason: 'Domain publishes fallback mail-routing records (RFC 5321). Individual mailbox unconfirmed.',
       checks_performed: checks,
       mailbox_verified: false
     };
@@ -314,7 +320,7 @@ async function evaluateEmail(emailStr: string) {
     email: clean,
     domain: syn.domain,
     status: 'Unknown',
-    reason: 'Domain records are ambiguous; mailbox existence cannot be confirmed without sending mail.',
+    reason: 'DNS lookup was inconclusive; mailbox existence cannot be confirmed.',
     checks_performed: checks,
     mailbox_verified: false
   };
@@ -328,7 +334,7 @@ async function evaluateEmail(emailStr: string) {
 app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
-    service: 'MailSure Deliverability Checker',
+    service: 'MailMate Deliverability Checker',
     runtime: 'Node Express Proxy & Flask Engine',
     timestamp: Date.now() / 1000
   });
@@ -369,9 +375,11 @@ app.post('/api/check', async (req, res) => {
   const results = [];
   const summary = {
     total: emailList.length,
-    likely_delivered: 0,
+    likely_deliverable: 0,
+    likely_delivered: 0, // legacy alias
     likely_to_bounce: 0,
-    unknown: 0
+    unknown: 0,
+    invalid_format: 0
   };
 
   for (const emailStr of emailList) {
@@ -383,6 +391,8 @@ app.post('/api/check', async (req, res) => {
       (summary as any)[key]++;
     }
   }
+  // Sync legacy alias
+  summary.likely_delivered = summary.likely_deliverable;
 
   res.json({
     total: emailList.length,
@@ -434,7 +444,7 @@ async function startServer() {
   }
 
   app.listen(PORT, () => {
-    console.log(`MailSure Express server running on http://0.0.0.0:${PORT}`);
+    console.log(`MailMate Express server running on http://0.0.0.0:${PORT}`);
   });
 }
 

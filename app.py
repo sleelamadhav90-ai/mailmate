@@ -1,5 +1,5 @@
 """
-MailSure — Email Deliverability Checker
+MailMate — Email Deliverability Checker
 Backend Flask Application
 """
 
@@ -42,37 +42,37 @@ EMAIL_REGEX = re.compile(
 
 def validate_email_syntax(email: str) -> Tuple[bool, str, str, str]:
     if not email or not isinstance(email, str):
-        return False, "", "", "Empty or non-string email address."
+        return False, "", "", "Invalid Email Syntax: Empty or non-string email address."
     
     email = email.strip()
     if len(email) > 254:
-        return False, "", "", "Email address exceeds maximum length of 254 characters."
+        return False, "", "", "Invalid Email Syntax: Email address exceeds maximum length of 254 characters."
     
     parts = email.split('@')
     if len(parts) != 2:
-        return False, "", "", "Email address must contain exactly one '@' symbol."
+        return False, "", "", "Invalid Email Syntax: Address must contain exactly one '@' symbol."
     
     local_part, domain_part = parts[0], parts[1].lower()
     
     if not local_part:
-        return False, "", domain_part, "Missing local part before '@'."
+        return False, "", domain_part, "Invalid Email Syntax: Missing local part before '@'."
     if len(local_part) > 64:
-        return False, local_part, domain_part, "Local part exceeds maximum length of 64 characters."
+        return False, local_part, domain_part, "Invalid Email Syntax: Local part exceeds maximum length of 64 characters."
     
     if not domain_part:
-        return False, local_part, "", "Missing domain part after '@'."
+        return False, local_part, "", "Invalid Email Syntax: Missing domain part after '@'."
     if len(domain_part) > 255:
-        return False, local_part, domain_part, "Domain name exceeds maximum length of 255 characters."
+        return False, local_part, domain_part, "Invalid Email Syntax: Domain name exceeds maximum length of 255 characters."
     
     if ".." in domain_part or ".." in local_part:
-        return False, local_part, domain_part, "Email contains invalid consecutive dots ('..')."
+        return False, local_part, domain_part, "Invalid Email Syntax: Email contains invalid consecutive dots ('..')."
     
     if not EMAIL_REGEX.match(email):
-        return False, local_part, domain_part, "Email syntax does not match standard RFC 5322 format."
+        return False, local_part, domain_part, "Invalid Email Syntax: Address does not match standard RFC 5322 syntax format."
     
     domain_labels = domain_part.split('.')
     if len(domain_labels) < 2 or len(domain_labels[-1]) < 2:
-        return False, local_part, domain_part, "Domain must have a valid top-level domain (TLD)."
+        return False, local_part, domain_part, "Invalid Email Syntax: Domain must contain a valid top-level domain (TLD)."
     
     return True, local_part, domain_part, ""
 
@@ -321,7 +321,7 @@ def index():
 def health_check():
     return jsonify({
         "status": "healthy",
-        "service": "MailSure Deliverability Checker",
+        "service": "MailMate Deliverability Checker",
         "has_dnspython": HAS_DNSPYTHON,
         "timestamp": time.time()
     }), 200

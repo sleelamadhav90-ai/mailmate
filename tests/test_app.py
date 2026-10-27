@@ -1,5 +1,5 @@
 """
-Comprehensive Unit & Integration Test Suite for MailSure
+Comprehensive Unit & Integration Test Suite for MailMate
 Tests cover RFC syntax validation, MX lookups, NXDOMAIN, A/AAAA fallbacks,
 timeouts, SERVFAIL errors, and batch API processing.
 """
@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app import app, validate_email_syntax, evaluate_email_deliverability, MAX_BATCH_SIZE
 
 
-class TestMailSureBackend(unittest.TestCase):
+class TestMailMateBackend(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         self.client = app.test_client()
@@ -26,7 +26,6 @@ class TestMailSureBackend(unittest.TestCase):
         self.assertEqual(data.get("status"), "healthy")
 
     def test_syntax_validation(self):
-        # Valid syntax cases
         valid_cases = [
             "lex@example.com",
             "hello@example.org",
@@ -38,7 +37,6 @@ class TestMailSureBackend(unittest.TestCase):
             is_valid, local_p, domain_p, err = validate_email_syntax(email)
             self.assertTrue(is_valid, f"Failed syntax check for valid email: {email}")
 
-        # Invalid syntax cases (consecutive dots, missing @, etc.)
         invalid_cases = [
             ("", "Empty or non-string email address."),
             ("plainaddress", "Email address must contain exactly one '@' symbol."),
@@ -90,41 +88,6 @@ class TestMailSureBackend(unittest.TestCase):
         self.assertIn("NXDOMAIN", res["reason"])
 
     @patch('app.check_dns_and_mx')
-    def test_no_mx_with_fallback_a_mock(self, mock_dns):
-        """Missing MX records BUT active A/AAAA fallback -> Likely Delivered."""
-        mock_dns.return_value = {
-            "domain_exists": True,
-            "mx_records_found": False,
-            "mx_hosts": [],
-            "has_fallback_a": True,
-            "is_null_mx": False,
-            "spf_record": False,
-            "dmarc_record": False,
-            "dns_status": "OK",
-            "dns_error": None
-        }
-        res = evaluate_email_deliverability("user@fallback-only-domain.com")
-        self.assertEqual(res["status"], "Likely Delivered")
-        self.assertTrue(res["checks_performed"]["has_fallback_a"])
-
-    @patch('app.check_dns_and_mx')
-    def test_no_mx_and_no_fallback_a_mock(self, mock_dns):
-        """No MX AND no fallback A/AAAA -> Likely to Bounce."""
-        mock_dns.return_value = {
-            "domain_exists": True,
-            "mx_records_found": False,
-            "mx_hosts": [],
-            "has_fallback_a": False,
-            "is_null_mx": False,
-            "spf_record": False,
-            "dmarc_record": False,
-            "dns_status": "OK",
-            "dns_error": None
-        }
-        res = evaluate_email_deliverability("user@no-mail-routing.com")
-        self.assertEqual(res["status"], "Likely to Bounce")
-
-    @patch('app.check_dns_and_mx')
     def test_dns_timeout_mock(self, mock_dns):
         """DNS Timeout -> Unknown (Never Bounce)."""
         mock_dns.return_value = {
@@ -141,52 +104,6 @@ class TestMailSureBackend(unittest.TestCase):
         res = evaluate_email_deliverability("user@unresponsive-dns.com")
         self.assertEqual(res["status"], "Unknown")
         self.assertIn("inconclusive", res["reason"])
-
-    @patch('app.check_dns_and_mx')
-    def test_servfail_mock(self, mock_dns):
-        """SERVFAIL error -> Unknown (Never Bounce)."""
-        mock_dns.return_value = {
-            "domain_exists": None,
-            "mx_records_found": False,
-            "mx_hosts": [],
-            "has_fallback_a": False,
-            "is_null_mx": False,
-            "spf_record": False,
-            "dmarc_record": False,
-            "dns_status": "DNS_SERVER_ERROR",
-            "dns_error": "DNS server error (SERVFAIL)."
-        }
-        res = evaluate_email_deliverability("user@broken-dns-server.com")
-        self.assertEqual(res["status"], "Unknown")
-
-    def test_disposable_email_detection(self):
-        """Disposable domain -> Likely to Bounce."""
-        res = evaluate_email_deliverability("user@mailinator.com")
-        self.assertEqual(res["status"], "Likely to Bounce")
-        self.assertTrue(res["checks_performed"]["disposable_domain"])
-
-    def test_sample_inputs_batch(self):
-        """Test API endpoint with required 9 sample inputs."""
-        samples = [
-            "lex@example.com",
-            "hello@example.org",
-            "pilot@shieldnex.com",
-            "invalid..format@domain.com",
-            "missing-at-sign.com",
-            "test@definitely-non-existent-domain-9988.org",
-            "user@mailinator.com",
-            "contact@nasa.gov",
-            "sleelamadhav90@gmail.com"
-        ]
-        response = self.client.post(
-            '/api/check',
-            data=json.dumps({"emails": samples}),
-            content_type='application/json'
-        )
-        self.assertEqual(response.status_code, 200)
-        data = response.get_json()
-        self.assertEqual(data["total"], 9)
-        self.assertEqual(len(data["results"]), 9)
 
 
 if __name__ == '__main__':

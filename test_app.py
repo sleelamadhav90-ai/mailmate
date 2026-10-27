@@ -1,5 +1,5 @@
 """
-Comprehensive Unit & Integration Test Suite for MailSure
+Comprehensive Unit & Integration Test Suite for MailMate
 Tests cover RFC syntax validation, MX lookups, NXDOMAIN, A/AAAA fallbacks,
 timeouts, SERVFAIL errors, and batch API processing.
 """
@@ -14,7 +14,7 @@ sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from app import app, validate_email_syntax, evaluate_email_deliverability, MAX_BATCH_SIZE
 
 
-class TestMailSureBackend(unittest.TestCase):
+class TestMailMateBackend(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         self.client = app.test_client()
